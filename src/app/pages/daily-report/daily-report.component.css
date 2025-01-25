@@ -1,0 +1,62 @@
+
+  
+  .example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .full-width {
+    width: 100%;
+    padding: 20px;
+  }
+  .container-fluid {
+    height: 90vh;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto; }
+  
+  .row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px; }
+  /* .row {
+    text-align: center;
+    padding-left: 30px ;
+    padding-right: 30px;
+    width: auto;
+    height: auto;
+  } */
+  .button-container {
+    display: flex;
+    /* Sử dụng Flexbox để căn chỉnh ngang */
+    justify-content: center;
+    /* Tạo khoảng cách giữa các nút */
+    align-items: center;
+    /* Căn giữa các nút theo chiều dọc */
+    gap: 20px;
+    margin: 20px;
+    /* Khoảng cách giữa các nút */
+  }
+  
+  mat-paginator {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0; /* Khoảng cách trên và dưới */
+  }
+.title{
+  text-align: center;
+}
+
+mat-row:hover, tr:hover {
+  background-color: #d3d3d3; /* Màu nền khi di chuột */
+  transition: background-color 0.3s; /* Hiệu ứng mượt */
+}
+
+

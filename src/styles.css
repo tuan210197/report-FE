@@ -1,0 +1,22 @@
+body {
+    margin: auto;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    overflow-x: hidden;
+    /* Ngăn cuộn ngang */
+}
+
+td {
+    padding-right: 8px;
+}
+
+
+.container-fluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    padding-bottom: 30px;
+
+}

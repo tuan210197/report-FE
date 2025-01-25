@@ -1,0 +1,38 @@
+.sidenav-header{
+    text-align: center;
+    padding-top: 15px;
+    cursor: pointer;
+    >img{
+        border-radius: 100%;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+}
+.sideheader-text{
+
+    >h1{
+        font-size: 25px;
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+    >p{
+        margin: 0;
+        font-size: 0.8rem;
+    };
+    
+}
+.hide-header-text{
+    opacity: 0;
+    height: 0px;
+}
+.active-page{
+    border-left: 6px solid #131842;
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+}
+span{
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}

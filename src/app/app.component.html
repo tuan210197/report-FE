@@ -1,0 +1,48 @@
+<!-- <router-outlet></router-outlet> -->
+
+<!-- <mat-toolbar class="mat-elevation-z3">
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
+        (click)="collapsed.set(!collapsed())">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <span>FII</span>
+    <span class="example-spacer"></span>
+
+</mat-toolbar> -->
+<!-- Creates a layout with a left-positioned sidenav and explicit content. -->
+<!-- <mat-sidenav-container>
+    <mat-sidenav opened mode="side" [style.width]="sidenavWidth()">
+        <app-sidebar-component [collapsed]="collapsed()" />
+    </mat-sidenav>
+    <mat-sidenav-content [style.margin-left]="sidenavWidth()">
+        <router-outlet />
+    </mat-sidenav-content>
+</mat-sidenav-container> -->
+
+  <mat-toolbar class="mat-elevation-z3">
+    
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
+        (click)="collapsed.set(!collapsed())">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span >REPORT MANAGEMENT SYSTEM</span>
+    <!-- <span class="example-spacer">đâs</span> -->
+  </mat-toolbar>
+  
+  <mat-sidenav-container class="sidebar">
+    <mat-sidenav
+      opened
+      mode="side"
+      [@sidenavToggle]="collapsed() ? 'collapsed' : 'expanded'"
+      [style.width]="sidenavWidth()"
+    >
+      <app-sidebar-component [collapsed]="collapsed()" />
+    </mat-sidenav>
+  
+    <mat-sidenav-content [@contentShift]="collapsed() ? 'collapsed' : 'expanded'">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  
+  

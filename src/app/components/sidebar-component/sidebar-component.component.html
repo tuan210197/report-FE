@@ -1,0 +1,20 @@
+<!-- <mat-list>
+    <a mat-list-item *ngFor="let item of menuItems()" [routerLink]="item.route" routerLinkActive="active-page">
+        <mat-icon matListItemIcon style="color: #4535C1;">{{item.icon}}</mat-icon>
+        <span matListItemTitle *ngIf="!sideNavCollapsed()">{{item.label}}</span>
+    </a>
+</mat-list> -->
+
+
+<mat-list>
+    <ng-container *ngFor="let item of menuItems()">
+      <a *ngIf="item.route" mat-list-item [routerLink]="item.route" routerLinkActive="active-page">
+        <mat-icon matListItemIcon style="color: #004ef5;">{{ item.icon }}</mat-icon>
+        <span matListItemTitle *ngIf="!sideNavCollapsed()">{{ item.label }}</span>
+      </a>
+      <a *ngIf="item.action" mat-list-item (click)="item.action()" routerLinkActive="active-page">
+        <mat-icon matListItemIcon style="color: #004ef5;">{{ item.icon }}</mat-icon>
+        <span matListItemTitle *ngIf="!sideNavCollapsed()">{{ item.label }}</span>
+      </a>
+    </ng-container>
+  </mat-list>

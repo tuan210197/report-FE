@@ -1,0 +1,230 @@
+<div class="container-fluid">
+
+  <div class="card-header card-header-danger">
+    <h2 class="title">Project Management</h2>
+
+  </div>
+  <form [formGroup]="form">
+    <div class="row">
+
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Receive Request From CNSBG </mat-label>
+
+          <input matInput [matDatepicker]="picker1" placeholder="Select a date" formControlName="startReceiveRequest">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End Receive Request From CNSBG</mat-label>
+          <input matInput [matDatepicker]="picker2" placeholder="Select a date" formControlName="endReceiveRequest">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start Request To Purchase</mat-label>
+          <input matInput [matDatepicker]="picker3" placeholder="Select a date" formControlName="startRequestPurchase">
+          <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End Request To Purchase</mat-label>
+          <input matInput [matDatepicker]="picker4" placeholder="Select a date" formControlName="endRequestPurchase">
+          <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+          <mat-datepicker #picker4></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start Estimate Budget</mat-label>
+          <input matInput [matDatepicker]="picker5" placeholder="Select a date" formControlName="startEstimate">
+          <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+          <mat-datepicker #picker5></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End Estimate Budget</mat-label>
+          <input matInput [matDatepicker]="picker6" placeholder="Select a date" formControlName="endEstimate">
+          <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+          <mat-datepicker #picker6></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start Request Quotation</mat-label>
+          <input matInput [matDatepicker]="picker7" placeholder="Select a date" formControlName="startQuotation">
+          <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
+          <mat-datepicker #picker7></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End Request Quotation</mat-label>
+          <input matInput [matDatepicker]="picker8" placeholder="Select a date" formControlName="endQuotation">
+          <mat-datepicker-toggle matSuffix [for]="picker8"></mat-datepicker-toggle>
+          <mat-datepicker #picker8></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start Submit Budget</mat-label>
+          <input matInput [matDatepicker]="picker9" placeholder="Select a date" formControlName="startSubmitBudget">
+          <mat-datepicker-toggle matSuffix [for]="picker9"></mat-datepicker-toggle>
+          <mat-datepicker #picker9></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End Submit Budget</mat-label>
+          <input matInput [matDatepicker]="picker10" placeholder="Select a date" formControlName="endSubmitBudget">
+          <mat-datepicker-toggle matSuffix [for]="picker10"></mat-datepicker-toggle>
+          <mat-datepicker #picker10></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start PR</mat-label>
+          <input matInput [matDatepicker]="picker11" placeholder="Select a date" formControlName="startPR">
+          <mat-datepicker-toggle matSuffix [for]="picker11"></mat-datepicker-toggle>
+          <mat-datepicker #picker11></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End PR</mat-label>
+          <input matInput [matDatepicker]="picker12" placeholder="Select a date" formControlName="endPR">
+          <mat-datepicker-toggle matSuffix [for]="picker12"></mat-datepicker-toggle>
+          <mat-datepicker #picker12></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="picker13" placeholder="Select a date" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="picker13"></mat-datepicker-toggle>
+          <mat-datepicker #picker13></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="picker14" placeholder="Select a date" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="picker14"></mat-datepicker-toggle>
+          <mat-datepicker #picker14></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>Start PO</mat-label>
+          <input matInput [matDatepicker]="picker15" placeholder="Select a date" formControlName="startPO">
+          <mat-datepicker-toggle matSuffix [for]="picker15"></mat-datepicker-toggle>
+          <mat-datepicker #picker15></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>End PO</mat-label>
+          <input matInput [matDatepicker]="picker16" placeholder="Select a date" formControlName="endPO">
+          <mat-datepicker-toggle matSuffix [for]="picker16"></mat-datepicker-toggle>
+          <mat-datepicker #picker16></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-md-6 ">
+      <mat-form-field class="full-width">
+        <input matInput type="text" [(ngModel)]="inputText" placeholder="Search ..." (input)="onSearch()" />
+      </mat-form-field>
+    </div>
+    <div class="col-md-6">
+      <div class="button-container">
+        <button type="button" class="btn btn-primary" (click)="openDialog()">Create</button>
+        <button type="button" class="btn btn-success" (click)="update()">Update</button>
+        <button type="button" class="btn btn-success" (click)="clearData()"> Clear</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> No. </th>
+        <td mat-cell *matCellDef="let element; let  i = index " [attr.data-index]>
+          {{ (paginator.pageIndex * paginator.pageSize) + i + 1 }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="projectName">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Project Name </th>
+        <td mat-cell *matCellDef="let element" (click)="getRecord(element)"> {{element.projectName}} </td>
+      </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="pic">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> P.I.C </th>
+        <td mat-cell *matCellDef="let element" (click)="getRecord(element)"> {{element.pic.fullName}} </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Category </th>
+        <td mat-cell *matCellDef="let element" (click)="getRecord(element)"> {{element.category.categoryName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Description</th>
+        <td mat-cell *matCellDef="let element" (click)="getRecord(element)"> {{element.description}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Status</th>
+        <td mat-cell *matCellDef="let element">
+          <label class="switch">
+            <input type="checkbox" class="checkbox" [checked]="element.completed"
+              (change)="updateStatus(element, $event)" />
+            <div class="slider"></div>
+          </label>
+        </td>
+      </ng-container>
+
+      <!-- Cột Action -->
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef [style.background-color]="color"> Implement </th>
+        <td *matCellDef="let element">
+          <mat-icon class="action-icon" (click)="showDetails(element.projectId)">open_in_new</mat-icon>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div class="paginator-container">
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+      </mat-paginator>
+    </div>
+
+
+  </div>
+  <!-- </div>
+    </div>
+  </div>-->
+</div>

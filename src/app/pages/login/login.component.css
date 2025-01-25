@@ -1,0 +1,74 @@
+
+/* .background{
+    background-image: url('/background.jpg');
+
+} */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    box-sizing: border-box;
+  background-image: url('/background.jpg');
+
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.logo-container {
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 100px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.m-t-12 {
+    margin-top: 12px;
+}
+
+.error-message {
+    color: red;
+    margin-top: 12px;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-card {
+        padding: 15px;
+    }
+
+    .logo {
+        max-width: 80px;
+    }
+}
+
+.forget-pw{
+    padding: 10px;
+    text-align: right;
+}

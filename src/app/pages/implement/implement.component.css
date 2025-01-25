@@ -1,0 +1,62 @@
+.row {
+    text-align: center;
+    padding-left: 30px ;
+    padding-right: 30px;
+    width: auto;
+    height: auto;
+  }
+  
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  td {
+    padding-right: 8px;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .container-fluid {
+    text-align: center;
+    height: 100%;
+  }
+  
+  .mySelectClass {
+    padding-top: 2px;
+  }
+  .myPanelClass{
+    /* margin: 25px 0px; */
+    width: 200px;
+}
+textarea {
+  min-height: 100px; /* Chiều cao tối thiểu */
+  max-height: 300px; /* Chiều cao tối đa */
+  resize: vertical;  /* Cho phép thay đổi kích thước theo chiều dọc */
+}
+
+.button{
+  border: none; /* Không có viền */
+  color: white; /* Màu chữ */
+  text-align: center; /* Căn giữa chữ */
+  text-decoration: none; /* Không gạch chân */
+  display: inline-block; /* Hiển thị dạng khối */
+  font-size: 16px; /* Cỡ chữ */
+  margin: 4px 2px; /* Khoảng cách giữa nút */
+  cursor: pointer; /* Con trỏ chuột */
+  border-radius: 12px; /* Bo tròn viền */
+  padding: 10px 24px; /* Khoảng cách giữa chữ và viền */
+}

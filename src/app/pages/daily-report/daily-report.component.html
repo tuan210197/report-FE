@@ -1,0 +1,208 @@
+<div class="container-fluid">
+  <!-- <div class="d-flex justify-content-center align-items-top vh-100">
+      <div class="col-md-8">
+        <div class="card"> -->
+  <div class="card-header card-header-danger">
+    <h2 class="title">Daily Report</h2>
+
+  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-grid-list cols="4" class="row" rowHeight="100px">
+      <!-- Project Name -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Bên Yêu Cầu</mat-label>
+          <input matInput formControlName="requester">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Địa Điểm Thi Công</mat-label>
+          <input matInput formControlName="address">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <!-- Description -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Tên Dự Án</mat-label>
+          <mat-select formControlName="projectId">
+            <mat-option *ngFor="let project of projects" [value]="project.projectId">
+              {{ project.projectName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Ngày Ký Dự Án</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols="4" class="row" rowHeight="100px">
+      <!-- Project Name -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Loại Hình Dự Án</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option *ngFor="let category of categories" [value]="category.categoryId">
+              {{ category.categoryName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Tiến Độ Dự Án</mat-label>
+          <input matInput formControlName="progress" type="number">
+        </mat-form-field>
+
+      </mat-grid-tile>
+
+      <!-- Description -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Số Lượng</mat-label>
+          <input matInput formControlName="quantity" type="number">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Ngày Dự Kiến Đóng Dự Án</mat-label>
+          <input matInput [matDatepicker]="picker3" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols="4" class="row" rowHeight="100px">
+      <!-- Project Name -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Số Lượng Đã Hoàn Thành</mat-label>
+          <input matInput formControlName="quantityCompleted" type="number">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Số Lượng Còn Lại</mat-label>
+          <input matInput formControlName="quantityRemain" type="number">
+        </mat-form-field>
+
+      </mat-grid-tile>
+
+      <!-- Description -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Nhà Thầu</mat-label>
+          <input matInput formControlName="contractor">
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Số Lượng Công Nhân</mat-label>
+          <input matInput formControlName="numberWorker" type="number">
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols="1" class="row" rowHeight="100px">
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Thực Thi Dự Án</mat-label>
+          <textarea matInput formControlName="implement"></textarea>
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <div class="button-container">
+      <button type="button" class="btn btn-primary" type="submit">Create</button>
+      <!-- <button type="button" class="btn btn-success">Update</button> -->
+    </div>
+
+  </form>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> STT</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          {{ i + 1+ paginator.pageIndex * paginator.pageSize }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="userName">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Người Báo Cáo </th>
+        <td mat-cell *matCellDef="let element"> {{element.user.fullName}} </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="requester">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Bên Yêu Cầu </th>
+        <td mat-cell *matCellDef="let element"> {{element.requester}} </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="projectName">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Tên Dự Án </th>
+        <td mat-cell *matCellDef="let element"> {{element.project.projectName}} </td>
+      </ng-container>
+      <!-- Weight Column -->
+      <ng-container matColumnDef="categoryName">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Loại Hình Dự Án </th>
+        <td mat-cell *matCellDef="let element"> {{element.category.categoryName}} </td>
+      </ng-container>
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Địa Điểm Thi Công</th>
+        <td mat-cell *matCellDef="let element"> {{element.address}} </td>
+      </ng-container>
+      <ng-container matColumnDef="progress">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Tiến Độ Dự Án</th>
+        <td mat-cell *matCellDef="let element"> {{element.progress}}% </td>
+      </ng-container>
+      <ng-container matColumnDef="quantityCompleted">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color">Đã Hoàn Thành</th>
+        <td mat-cell *matCellDef="let element"> {{element.quantityCompleted}} </td>
+      </ng-container>
+      <ng-container matColumnDef="quantityRemain">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Còn Lại</th>
+        <td mat-cell *matCellDef="let element"> {{element.quantityRemain}} </td>
+      </ng-container>
+      <ng-container matColumnDef="contractor">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Nhà Thầu</th>
+        <td mat-cell *matCellDef="let element"> {{element.contractor}} </td>
+      </ng-container>
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Số Lượng</th>
+        <td mat-cell *matCellDef="let element"> {{element.quantity}} </td>
+      </ng-container>
+      <ng-container matColumnDef="numberWorker">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Số Lượng Công Nhân</th>
+        <td mat-cell *matCellDef="let element"> {{element.numberWorker}} </td>
+      </ng-container>
+      <ng-container matColumnDef="create_at">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> Thời Gian Báo Cáo</th>
+        <td mat-cell *matCellDef="let element"> {{convertToCustomFormat(element.create_at)}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div class="paginator-container">
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+      </mat-paginator>
+    </div>
+
+
+  </div>
+  <!-- </div>
+      </div>
+    </div>-->
+</div>
