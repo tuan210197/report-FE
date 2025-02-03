@@ -116,7 +116,7 @@ export class DailyReportComponent {
     this.share.getProjectName().subscribe((data: any) => {
       this.projects = data; // Gán dữ liệu vào mảng projects
     }, (error) => {
-      console.error('Lỗi khi tải dự án:', error);
+      // console.error('Lỗi khi tải dự án:', error);
     });
   }
 
@@ -124,16 +124,16 @@ export class DailyReportComponent {
     this.share.getProjectByUserId().subscribe((data: any) => {
       this.projects = data; // Gán dữ liệu vào mảng projects
     }, (error) => {
-      console.error('Lỗi khi tải dự án:', error);
+      // console.error('Lỗi khi tải dự án:', error);
     });
   }
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories
-      console.log(data);
+      // console.log(data);
     },
       (error) => {
-        console.error('Lỗi khi tải danh mục:', error);
+        // console.error('Lỗi khi tải danh mục:', error);
 
       });
   }
@@ -177,7 +177,7 @@ export class DailyReportComponent {
         implement: this.form.value.implement,
 
       }
-      console.log(val);
+      // console.log(val);
       this.share.addNewDailyReport(val).subscribe((data: any) => {
         this.getAllDailyReport();
         if(data.code === '200'){
@@ -185,7 +185,7 @@ export class DailyReportComponent {
         }
       });
     } else {
-      console.log("Form invalid");
+      // console.log("Form invalid");
     }
 
 
@@ -208,7 +208,7 @@ export class DailyReportComponent {
       // Kết hợp thành chuỗi định dạng "YYYY-MM-DD HH:mm"
       return `${year}-${month}-${day} ${hours}:${minutes}`;
     } catch (error) {
-      console.error("Invalid date string:", error);
+      // console.error("Invalid date string:", error);
       return null;
     }
   }

@@ -59,10 +59,7 @@ export class HomeComponent implements OnInit {
       const completed: [string, number][] = data2.map(item => [item.categoryName, item.completed]);
       const remaining: [string, number][] = data2.map(item => [item.categoryName, item.remaining]);
       const news: [string, number][] = data2.map(item => [item.categoryName, item.news]);
-      console.log(this.total);
-      console.log(this.completed);
-      console.log(this.remain);
-      console.log(this.news);
+   
       this.chartOptions = {
         chart: {
           type: 'column'
