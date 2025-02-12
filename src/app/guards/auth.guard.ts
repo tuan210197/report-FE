@@ -43,18 +43,36 @@ export class AuthGuard implements CanActivate {
     '/register',
     '/login',
   ]; // Các URL bạn muốn loại bỏ kiểm tra
+  private apiUrl = '/api'; // Replace with your API URL
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
 
-        const currentUrl = state.url;
-
+    const currentUrl = state.url;
+  
     // Bỏ qua AuthGuard cho các URL trong danh sách loại trừ
     const isExcluded = this.excludedUrls.some(url => currentUrl.includes(url));
 
     if (isExcluded) {
-      return of(true);
+      // return of(true);
+      return this.http.post<string>(this.apiUrl + '/user/check-auth', {}).pipe(
+        map((response: any) => {
+          if (response.message === 'Successfully') {
+            // Nếu đã đăng nhập và cố truy cập /login -> Chuyển về /home
+            if (currentUrl === '/login') {
+              this.router.navigate(['/home']);
+              return false;
+            }
+            return true;
+          }
+          return true; // Nếu chưa đăng nhập, cho phép truy cập các trang ngoại lệ (login, register, etc.)
+        }),
+        catchError(() => {
+          return of(true); // Nếu API lỗi, vẫn cho phép truy cập trang login
+        })
+      );
     }
-    return this.http.post<string>('/api/user/check-auth', {}).pipe(
+   
+    return this.http.post<string>(this.apiUrl+'/user/check-auth', {}).pipe(
       map((response: any) => {
         if (response.message === 'Successfully') {
           // this.router.navigate(['/home']); // Chuyển hướng đến /home nếu đã đăng nhập

@@ -15,6 +15,10 @@ import { CommonModule } from '@angular/common';
 import { ShareService } from '../../services/share.service';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+import PptxGenJS from 'pptxgenjs';
 
 interface dataTable {
   user: string;
@@ -91,6 +95,7 @@ export class DailyReportComponent {
       startDate: [''],
       endDate: [''],
       implement: ['', [Validators.required]],
+      exportDate: ['']
     });
   }
   checkFormErrors(formGroup: FormGroup): boolean {
@@ -177,10 +182,10 @@ export class DailyReportComponent {
         implement: this.form.value.implement,
 
       }
-      // console.log(val);
+      console.log(val);
       this.share.addNewDailyReport(val).subscribe((data: any) => {
         this.getAllDailyReport();
-        if(data.code === '200'){
+        if (data.code === '200') {
           Swal.fire('Success', 'Tạo Báo Cáo Thành Công', 'info')
         }
       });
@@ -212,8 +217,217 @@ export class DailyReportComponent {
       return null;
     }
   }
-}
+  convertToCustomFormatDate(dateString: string): string | null {
+    // Kiểm tra đầu vào có hợp lệ không
+    if (!dateString) return null;
 
+    try {
+      // Tạo đối tượng Date từ chuỗi đầu vào
+      const date = new Date(dateString);
+
+      // Lấy các thành phần ngày, giờ, phút
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+
+      // Kết hợp thành chuỗi định dạng "YYYY-MM-DD HH:mm"
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      // console.error("Invalid date string:", error);
+      return null;
+    }
+  }
+  async setlectionChange(event: any) {
+    // this.selectedCategory = event.value;
+    var val = {
+      projectId: event.value
+    }
+    const report: any = await firstValueFrom(this.share.getDailyReportByProjecetId(val));
+
+    if (report.data !== null && 'reportId' in report.data) {
+      this.form.patchValue(
+        {
+          requester: report.data.requester, // Bắt buộc nhập
+          address: report.data.address, // Bắt buộc nhập
+          projectId: report.data.project.projectId, // Bắt buộc nhập
+          progress: report.data.progress, // Bắt buộc ngày bắt đầu
+          quantity: report.data.quantity, // Phải lớn hơn 0
+          categoryId: report.data.category.categoryId, // Bắt buộc chọn
+          quantityCompleted: report.data.quantityCompleted, // Bắt buộc nhập
+          quantityRemain: report.data.quantityRemain, // Bắt buộc nhập
+          contractor: report.data.contractor, // Bắt buộc nhập
+          numberWorker: report.data.numberWorker, // Bắt buộc nhập
+          startDate: report.data.startDate, // Bắt buộc nhập
+          endDate: report.data.endDate, // Bắt buộc nhập
+          implement: report.data.implement, // Bắt buộc nhập
+        }
+      );
+    }
+    if (report.data !== null && 'projectId' in report.data) {
+      this.form.patchValue(
+        {
+          projectId: report.data.projectId, // Bắt buộc nhập
+          categoryId: report.data.category.categoryId, // Bắt buộc chọn
+          requester: null, // Bắt buộc nhập
+          address: null,
+          progress: null,
+          quantity: null,
+          quantityCompleted: null,
+          quantityRemain: null,
+          contractor: null,
+          numberWorker: null,
+          startDate: null,
+          endDate: null,
+          implement: null,
+
+        }
+      );
+    }
+  }
+
+  async exportToExcel() {
+    var val = {
+      date: this.convertToCustomFormatDate(this.form.value.exportDate)
+    }
+    const data: any = await firstValueFrom(this.share.getExportDailyReport(val));
+    if (this.convertToCustomFormatDate(this.form.value.exportDate) !== null) {
+      this.generateExcel(data);
+      // this.exportToPptx(data);
+    } else {
+      Swal.fire('Error', 'Vui lòng chọn ngày xuất báo cáo', 'error');
+    }
+  }
+
+  private generateExcel(data: any[]) {
+
+    const customHeaders = [
+      ['STT', 'Ngày báo cáo', 'Người báo cáo', 'Bên Yêu Cầu', 'Tên Dự án', 'Loại Dự Án', 'Địa Điểm Làm Việc', 'Nhà thầu',
+        'Số Công Nhân', 'Tiến Độ (%)', 'Số Lượng', 'Hoàn Thành', 'Còn Lại', 'Ngày Bắt Đầu',
+        'Ngày Kết Thúc', 'Báo Cáo Công Việc Hàng Ngày']
+    ];
+    // 2️⃣ Chuyển đổi dữ liệu thành định dạng mảng theo đúng thứ tự cột
+    console.log(data);
+    const exportData = data.map((item, index) => [
+      index + 1,
+      this.convertToCustomFormatDate(item.createAt),  // Chuyển đổi format ngày
+      item.fullName,
+      item.requester,
+      item.projectName,
+      item.categoryName,
+      item.address,
+      item.contractor,
+      item.numberWorker,
+      item.progress,
+      item.quantity,
+      item.quantityCompleted,
+      item.quantityRemain,
+      this.convertToCustomFormatDate(item.startDate),
+      this.convertToCustomFormatDate(item.endDate),
+      item.implement,
+
+
+    ]);
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([...customHeaders, ...exportData]);
+
+    // 4️⃣ Định dạng cột (Độ rộng)
+    worksheet['!cols'] = [
+      { wch: 5 },   // STT
+      { wch: 20 },  // Ngày báo cáo
+      { wch: 20 },  // Ngày báo cáo
+      { wch: 20 },  // Người báo cáo
+      { wch: 50 },  // Dự án
+      { wch: 30 },  // Loại công việc
+      { wch: 30 },  // Địa chỉ
+      { wch: 20 },  // Nhà thầu
+      { wch: 20 },  // Số công nhân
+      { wch: 20 },  // Tiến độ
+      { wch: 15 },  // Số lượng
+      { wch: 15 },  // Hoàn thành
+      { wch: 15 },  // Còn lại
+      { wch: 30 },  // Ngày bắt đầu
+      { wch: 30 },  // Ngày kết thúc
+      { wch: 100 }   // Thực thi dự án
+    ];
+
+    // 5️⃣ Xuất file Excel
+    const workbook: XLSX.WorkBook = { Sheets: { 'Báo cáo': worksheet }, SheetNames: ['Báo cáo'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    // 6️⃣ Lưu file xuống máy với tên rõ ràng
+    saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(this.form.value.exportDate) + '.xlsx');
+  }
+
+  exportToPptx(data: any[]) {
+    console.log('Dữ liệu nhận được:', data);
+  
+    if (!data || data.length === 0) {
+      console.warn('Không có dữ liệu để xuất PowerPoint.');
+      return;
+    }
+  
+    let pptx = new PptxGenJS();
+    let slide = pptx.addSlide();
+  
+    // Tiêu đề slide
+    slide.addText('BÁO CÁO DAILY REPORT', {
+      x: 1, y: 0.3, w: 8, h: 0.5, fontSize: 24, bold: true, align: 'center'
+    });
+  
+    // Định dạng dữ liệu bảng
+    let tableData: any[] = [];
+  
+    // Header
+    tableData.push([
+      { text: 'STT', bold: true }, { text: 'Ngày báo cáo', bold: true }, { text: 'Người báo cáo', bold: true },
+      { text: 'Bên Yêu Cầu', bold: true }, { text: 'Tên Dự án', bold: true }, { text: 'Loại Dự Án', bold: true },
+      { text: 'Địa Điểm', bold: true }, { text: 'Nhà thầu', bold: true }, { text: 'Số Công Nhân', bold: true },
+      { text: 'Tiến Độ (%)', bold: true }, { text: 'Số Lượng', bold: true }, { text: 'Hoàn Thành', bold: true },
+      { text: 'Còn Lại', bold: true }, { text: 'Ngày Bắt Đầu', bold: true }, { text: 'Ngày Kết Thúc', bold: true },
+      { text: 'Thực Thi', bold: true }
+    ]);
+  
+    // Dữ liệu từng dòng
+    data.forEach((item, index) => {
+      tableData.push([
+        { text: (index + 1).toString() },
+        { text: item.createAt ? this.convertToCustomFormatDate(item.createAt) : 'N/A' },
+        { text: item.fullName || 'N/A' },
+        { text: item.requester || 'N/A' },
+        { text: item.projectName || 'N/A' },
+        { text: item.categoryName || 'N/A' },
+        { text: item.address || 'N/A' },
+        { text: item.contractor || 'N/A' },
+        { text: item.numberWorker?.toString() || '0' },
+        { text: item.progress?.toString() || '0' },
+        { text: item.quantity?.toString() || '0' },
+        { text: item.quantityCompleted?.toString() || '0' },
+        { text: item.quantityRemain?.toString() || '0' },
+        { text: item.startDate ? this.convertToCustomFormatDate(item.startDate) : 'N/A' },
+        { text: item.endDate ? this.convertToCustomFormatDate(item.endDate) : 'N/A' },
+        { text: item.implement || 'N/A' },
+      ]);
+    });
+  
+    // Thêm bảng vào slide
+    slide.addTable(tableData, {
+      x: 0.3, y: 1, w: 9,
+      colW: [0.5, 1, 1.5, 1.5, 2, 1.5, 2, 1.5, 1, 1, 1, 1, 1, 1, 1, 2], // Kích thước cột
+      border: { type: 'solid', color: '000000' },
+      fontSize: 12,
+      align: 'left',
+    });
+  
+    // Xuất file PowerPoint
+    pptx.writeFile({ fileName: 'Daily_Report.pptx' })
+      .then(() => console.log('Xuất file thành công'))
+      .catch(error => console.error('Lỗi khi xuất file:', error));
+  }
+  
+  
+}
 
 
 

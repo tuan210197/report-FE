@@ -151,6 +151,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     const dataRow: any = await firstValueFrom(this.share.getProjectById(row.projectId));
     this.form.patchValue(dataRow.data);
     this.selectedProjectId = row.projectId;
+    console.log(dataRow)
   }
   clearData() {
     this.form.reset();

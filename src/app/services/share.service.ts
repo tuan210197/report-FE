@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 export class ShareService {
 
   private apiUrl = '/api';
+  // private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -81,6 +82,13 @@ export class ShareService {
   }
   getDailyReport() {
     return this.http.get(this.apiUrl + '/daily-report/find-by-uuid');
+  }
+  getDailyReportByProjecetId(data: any) {
+    return this.http.post(this.apiUrl + '/daily-report/get-by-project', data);
+  }
+
+  getExportDailyReport(data: any) {
+    return this.http.post(this.apiUrl + '/daily-report/export', data);
   }
   /*end daily report */
 

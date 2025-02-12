@@ -9,6 +9,17 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-grid-list cols="4" class="row" rowHeight="100px">
       <!-- Project Name -->
+             <!-- Description -->
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>Tên Dự Án</mat-label>
+          <mat-select formControlName="projectId" (selectionChange)="setlectionChange($event)">
+            <mat-option *ngFor="let project of projects" [value]="project.projectId">
+              {{ project.projectName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-grid-tile>
       <mat-grid-tile>
         <mat-form-field class="full-width">
           <mat-label>Bên Yêu Cầu</mat-label>
@@ -23,17 +34,7 @@
         </mat-form-field>
       </mat-grid-tile>
 
-      <!-- Description -->
-      <mat-grid-tile>
-        <mat-form-field class="full-width">
-          <mat-label>Tên Dự Án</mat-label>
-          <mat-select formControlName="projectId">
-            <mat-option *ngFor="let project of projects" [value]="project.projectId">
-              {{ project.projectName }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-grid-tile>
+
 
       <mat-grid-tile>
         <mat-form-field class="full-width">
@@ -59,7 +60,7 @@
 
       <mat-grid-tile>
         <mat-form-field class="full-width">
-          <mat-label>Tiến Độ Dự Án</mat-label>
+          <mat-label>% Hoàn Thành</mat-label>
           <input matInput formControlName="progress" type="number">
         </mat-form-field>
 
@@ -114,18 +115,42 @@
         </mat-form-field>
       </mat-grid-tile>
     </mat-grid-list>
-    <mat-grid-list cols="1" class="row" rowHeight="100px">
-      <mat-grid-tile>
-        <mat-form-field class="full-width">
-          <mat-label>Thực Thi Dự Án</mat-label>
-          <textarea matInput formControlName="implement"></textarea>
-        </mat-form-field>
-      </mat-grid-tile>
-    </mat-grid-list>
-    <div class="button-container">
+
+
+      <mat-grid-list cols="4" rowHeight="100px">
+        <!-- Cột 1: Chiếm 2 cột (1/2 hàng) -->
+        <mat-grid-tile colspan="2">
+          <mat-form-field class="full-width">
+            <mat-label>Báo Cáo Công Việc Hàng Ngày</mat-label>
+            <textarea matInput formControlName="implement"></textarea>
+          </mat-form-field>
+        </mat-grid-tile>
+      
+        <!-- Cột 2: Chiếm 1 cột (1/4 hàng) -->
+        <mat-grid-tile>
+          <mat-form-field class="full-width">
+            <mat-label>Chọn Ngày Xuất Báo Cáo</mat-label>
+            <input matInput [matDatepicker]="picker4" formControlName="exportDate">
+            <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+            <mat-datepicker #picker4></mat-datepicker>
+          </mat-form-field>
+        </mat-grid-tile>
+      
+        <!-- Cột 3: Chứa nút bấm (chiếm 1/4 hàng) -->
+        <mat-grid-tile>
+          <div class="button-container">
+            <button type="button" class="btn btn-primary" type="submit">Create</button>
+          </div>
+          <div class="button-container">
+            <button type="button" class="btn btn-primary" (click)="exportToExcel()">export</button>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+      
+    <!-- </mat-grid-list> -->
+    <!-- <div class="button-container">
       <button type="button" class="btn btn-primary" type="submit">Create</button>
-      <!-- <button type="button" class="btn btn-success">Update</button> -->
-    </div>
+    </div> -->
 
   </form>
 

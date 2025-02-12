@@ -93,25 +93,27 @@ export class AddProjectComponent implements OnInit {
       description: this.form.value.description,
       submembers: this.form.value.submember
     }
+    console.log(val);
     this.share.addProject(val).subscribe(async (data: any) => {
       if (data != null) {
         try {
           // Duyệt qua từng submember và thực hiện addSubMember
-          const subMemberPromises = val.submembers.map((submember: any) => {
-            const val2 = {
-              projectName: this.form.value.projectName,
-              projectId: data.data,
-              user: submember.uid,
-            };
-            console.log(val2);
+          if (val.submembers !== '') {
+            const subMemberPromises = val.submembers.map((submember: any) => {
+              const val2 = {
+                projectName: this.form.value.projectName,
+                projectId: data.data,
+                user: submember.uid,
+              };
+              console.log(val2);
 
-            // Trả về Observable được chuyển thành Promise
-            return firstValueFrom(this.share.addSubMember(val2));
-          });
+              // Trả về Observable được chuyển thành Promise
+              return firstValueFrom(this.share.addSubMember(val2));
+            });
 
-          // Chờ tất cả các lời hứa (Promises) hoàn thành
-          await Promise.all(subMemberPromises);
-
+            // Chờ tất cả các lời hứa (Promises) hoàn thành
+            await Promise.all(subMemberPromises);
+          }
           // Hiển thị thông báo sau khi tất cả các API thành công
           Swal.fire({
             title: 'Thành công',

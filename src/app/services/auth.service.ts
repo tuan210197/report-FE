@@ -11,7 +11,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 export class AuthService {
 
   private apiUrl = '/api'; // Replace with your API URL
-
+  // private apiUrl = 'http://10.81.160.29:8080/api'
 
   public isRefreshing = false; // Trạng thái kiểm tra việc làm mới token
   public refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
@@ -47,10 +47,11 @@ export class AuthService {
 
  
 
-  checkAuthentication() {
-    // Kiểm tra sự tồn tại của cookie với tên 'token'
-    return this.http.post(this.apiUrl + '/user/check-auth', {}, { withCredentials: true });
-  }
+  // checkAuthentication() {
+
+  //   // Kiểm tra sự tồn tại của cookie với tên 'token'
+  //   return this.http.post(this.apiUrl + '/user/check-auth', {}, { withCredentials: true });
+  // }
 
   // Hàm lấy giá trị cookie
   private getCookie(name: string): string | null {
