@@ -60,10 +60,17 @@ export class HomeComponent implements OnInit {
       const remaining: [string, number][] = data2.map(item => [item.categoryName, item.remaining]);
       const news: [string, number][] = data2.map(item => [item.categoryName, item.news]);
    
+      console.log('total:'+this.total);
+      console.log('news:'+this.news);
+      console.log('remain: '+this.remain);
+      console.log('completed: '+this.completed);
+
       this.chartOptions = {
         chart: {
-          type: 'column'
+          type: 'column',
         },
+       
+      
         title: {
           text: 'PROJECT MANAGEMENT'
         },
@@ -99,7 +106,7 @@ export class HomeComponent implements OnInit {
                     drilldownData = completed;
                   } else if (this.name === 'Remaining') {
                     drilldownData = remaining;
-                  } else if (this.name === 'New project') {
+                  } else if (this.name === 'Canceled') {
                     drilldownData = news;
                   }
                   this.series.chart.addSeriesAsDrilldown(this, {
@@ -135,7 +142,7 @@ export class HomeComponent implements OnInit {
                 drilldown: 'remaining'
               },
               {
-                name: 'New project',
+                name: 'Canceled',
                 y: this.news,
                 drilldown: 'new'
               }
@@ -146,7 +153,7 @@ export class HomeComponent implements OnInit {
           series: [] // Không cần thêm series ở đây; chúng được thêm động trong sự kiện click
         },
         credits: {
-          enabled: true
+          enabled: false
         }
       };
       Highcharts.chart('container', this.chartOptions);

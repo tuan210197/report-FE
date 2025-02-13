@@ -18,6 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
 
 export interface table {
   projectName: string;
@@ -26,6 +27,7 @@ export interface table {
   description: string;
   projectId: number;
   completed: boolean;
+  canceled: boolean;
 }
 
 @Component({
@@ -41,7 +43,7 @@ export interface table {
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule, CommonModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter },
   { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },],
@@ -131,7 +133,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         pic: item.pic,
         description: item.description,
         projectId: item.projectId,
-        completed: item.completed
+        completed: item.completed,
+        canceled: item.canceled
       }))
     }
 
@@ -230,6 +233,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       projectName: searchValue.toUpperCase(),
       categoryName: searchValue.toLocaleUpperCase()
     }
+    console.log(val)
     const data = await firstValueFrom(this.share.search(val));
     this.tableList = [];
 
@@ -240,16 +244,106 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         pic: item.pic,
         description: item.description,
         projectId: item.projectId,
-        completed: item.completed
+        completed: item.completed,
+        canceled: item.canceled
       }))
     }
-   
+
     this.dataSource.data = this.tableList;
     this.paginator.firstPage()
   }
+
+
+  // Hàm lấy class theo trạng thái
+  getStatusClass(project: any): string {
+
+    if (project.canceled) {
+      return 'btn-danger'; // Màu đỏ
+    }
+    if (project.completed) {
+      return 'btn-success'; // Màu xanh
+    }
+    return 'btn-warning'; // Màu vàng
+  }
+
+  // Hàm lấy text theo trạng thái
+  getStatusText(project: any): string {
+    if (project.canceled) {
+      return 'Cancelled';
+    }
+    if (project.completed) {
+      return 'Completed';
+    }
+    return 'In Progress';
+  }
+  confirmChange(data: any) {
+
+    Swal.fire({
+      title: 'Confirm Status Change?',
+      text: 'Do you want to change the status of this project?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Change Status',
+      cancelButtonText: 'Cancelled',
+      customClass: {
+        confirmButton: 'btn btn-success me-2',
+        cancelButton: 'btn btn-danger ms-2',
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Danh sách tất cả trạng thái
+        const allStatusOptions: { [key: string]: string } = {
+          remain: 'In Progress',
+          completed: 'Completed',
+          canceled: 'Cancelled',
+        };
+
+        let currentStatus: string = '';
+        if (data.completed === true) {
+          currentStatus = 'completed';
+        } else if (data.canceled === true) {
+          currentStatus = 'canceled';
+        } else {
+          currentStatus = 'remain';
+        }
+
+        // Tạo một object mới, lọc bỏ trạng thái hiện tại
+        const statusOptions = Object.fromEntries(
+          Object.entries(allStatusOptions).filter(([key]) => key !== currentStatus)
+        );
+        Swal.fire({
+          title: 'Update Status',
+          input: 'select',
+          inputOptions: statusOptions, // Truyền danh sách trạng thái đã loại bỏ trạng thái hiện tại
+          inputPlaceholder: 'Choose a status',
+          showCancelButton: true,
+          confirmButtonText: 'Update',
+          cancelButtonText: 'Cancelled',
+          customClass: {
+            confirmButton: 'btn btn-success me-2',
+            cancelButton: 'btn btn-danger ms-2',
+          }
+        }).then((newStatus) => {
+          if (newStatus.isConfirmed && newStatus.value) {
+            this.updateProjectStatus(newStatus.value, data.projectId);
+          }
+        });
+      }
+    });
+  }
+  async updateProjectStatus(status: any, projectId: any) {
+
+    var val = {
+      projectId: projectId,
+      status: status
+    }
+    const update: any = await firstValueFrom(this.share.updateStatus(val));
+   
+    Swal.fire('update', update.message, 'info')
+    this.loadProject();
+  }
+
 }
-
-
 
 
 

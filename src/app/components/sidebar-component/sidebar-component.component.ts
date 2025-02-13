@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 
 export type MenuItem = {
@@ -60,21 +60,47 @@ export class SidebarComponentComponent {
 
 
   ])
+  //  logout() {
+  //  this.auth.logout().pipe(
+
+  //     catchError((error) => {
+  //       // Bỏ qua lỗi hoặc xử lý nếu cần
+  //       console.warn('Error during logout', error);
+  //       return of(null); // Trả về Observable rỗng để không gây gián đoạn
+  //     })
+  //   )
+  //     .subscribe(() => {
+  //       // Logic sau khi logout thành công
+  //       console.log('Logout successful');
+  //     });
+  //     // window.location.reload();
+  //     this.router.navigate(['/login']).then(() => {
+  //       window.location.reload();
+  //     });
+  // }
   logout() {
     this.auth.logout().pipe(
+      finalize(() => {
+        console.log('Logout successful');
+  
+        // Xóa toàn bộ dữ liệu người dùng trong frontend
+        localStorage.clear();
+        sessionStorage.clear();
+  
+        // Điều hướng về login sau khi API xử lý xong
+        this.router.navigateByUrl('/login');
+        // .then(() => {
+        //   window.location.reload(); // Đảm bảo cookie được backend xóa hoàn toàn trước khi reload
+        // });
+      }),
       catchError((error) => {
-        // Bỏ qua lỗi hoặc xử lý nếu cần
         console.warn('Error during logout', error);
         return of(null); // Trả về Observable rỗng để không gây gián đoạn
       })
-    )
-      .subscribe(() => {
-        // Logic sau khi logout thành công
-        console.log('Logout successful');
-      });;
-      // window.location.reload();
-      this.router.navigate(['/login']);
+    ).subscribe();
   }
+  
+  
   sideNavCollapsed = signal(false);
   activeRoute = signal('');
 
@@ -91,3 +117,5 @@ export class SidebarComponentComponent {
 
   profileSize = computed(() => this.sideNavCollapsed() ? '32' : '10000')
 }
+
+

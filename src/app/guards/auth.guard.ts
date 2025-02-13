@@ -11,71 +11,46 @@ import { AuthService } from '../services/auth.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  // constructor(private router: Router, private authService: AuthService) {}
-
-
-
-  //   canActivate(): boolean {
-  //     // Kiểm tra xem người dùng có token trong cookie không
-  //     const isAuthenticated = this.authService.checkAuthentication();
-  //     // Nếu không có token hoặc không xác thực
-  //     if (!isAuthenticated) {
-  //       // Kiểm tra nếu người dùng đã ở trang login thì không điều hướng lại vào login
-  //       if (this.router.url !== '/login') {
-  //         this.router.navigate(['/login']);  // Điều hướng về trang login
-  //       }
-  //       return false;
-  //     }
-
-  //     // Nếu đã đăng nhập, cho phép truy cập vào route
-  //     return true;
-  //   }
-  // }
-
-
-
   constructor(private http: HttpClient, private router: Router) { }
-
   private excludedUrls: string[] = [
     '/forgot-password',
     '/resetPassword',
     '/verifyEmail',
     '/register',
     '/login',
+    '/logout'
   ]; // Các URL bạn muốn loại bỏ kiểm tra
   private apiUrl = '/api'; // Replace with your API URL
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-
     const currentUrl = state.url;
-  
-    // Bỏ qua AuthGuard cho các URL trong danh sách loại trừ
     const isExcluded = this.excludedUrls.some(url => currentUrl.includes(url));
-
     if (isExcluded) {
-      // return of(true);
-      return this.http.post<string>(this.apiUrl + '/user/check-auth', {}).pipe(
-        map((response: any) => {
-          if (response.message === 'Successfully') {
-            // Nếu đã đăng nhập và cố truy cập /login -> Chuyển về /home
-            if (currentUrl === '/login') {
-              this.router.navigate(['/home']);
+      if (currentUrl === '/login') {
+        return this.http.post<string>(this.apiUrl + '/user/check-auth', {}, { withCredentials: true }).pipe(
+          map((response: any) => {
+            if (response.message === 'Successfully') {
+              this.router.navigate(['/home']); // Nếu đã đăng nhập, chuyển hướng về trang home
               return false;
             }
-            return true;
-          }
-          return true; // Nếu chưa đăng nhập, cho phép truy cập các trang ngoại lệ (login, register, etc.)
-        }),
-        catchError(() => {
-          return of(true); // Nếu API lỗi, vẫn cho phép truy cập trang login
-        })
-      );
+            return true; // Nếu chưa đăng nhập, cho phép truy cập trang login
+          }),
+          catchError(() => {
+            return of(true); // Nếu API lỗi, vẫn cho phép truy cập login
+          })
+        );
+      }
+      return of(true);
     }
-   
-    return this.http.post<string>(this.apiUrl+'/user/check-auth', {}).pipe(
+
+    return this.http.post<string>(this.apiUrl + '/user/check-auth', {}, { withCredentials: true }).pipe(
       map((response: any) => {
         if (response.message === 'Successfully') {
           // this.router.navigate(['/home']); // Chuyển hướng đến /home nếu đã đăng nhập
+          if (currentUrl === '/login') {
+            this.router.navigate(['/home']);
+            return false;
+          }
           return true; // Không cho phép truy cập vào trang khác (ví dụ: /login)
         }
         this.router.navigate(['/login']);
