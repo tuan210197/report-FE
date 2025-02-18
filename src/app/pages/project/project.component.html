@@ -24,24 +24,7 @@
           <mat-datepicker #picker2></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="col-md-3">
-        <mat-form-field class="full-width">
-          <mat-label>{{'startRequestPurchase'| translate }}</mat-label>
-          <input matInput [matDatepicker]="picker3"  formControlName="startRequestPurchase">
-          <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-          <mat-datepicker #picker3></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="col-md-3">
-        <mat-form-field class="full-width">
-          <mat-label>{{'endRequestPurchase'| translate }}</mat-label>
-          <input matInput [matDatepicker]="picker4"  formControlName="endRequestPurchase">
-          <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
-          <mat-datepicker #picker4></mat-datepicker>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
+
       <div class="col-md-3">
         <mat-form-field class="full-width">
           <mat-label>{{'startEstimate'| translate }}</mat-label>
@@ -56,6 +39,42 @@
           <input matInput [matDatepicker]="picker6"  formControlName="endEstimate">
           <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
           <mat-datepicker #picker6></mat-datepicker>
+        </mat-form-field>
+      </div>
+     
+    </div>
+    <div class="row">
+      <!-- <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>{{'startEstimate'| translate }}</mat-label>
+          <input matInput [matDatepicker]="picker5"  formControlName="startEstimate">
+          <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+          <mat-datepicker #picker5></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>{{'endEstimate'| translate }}</mat-label>
+          <input matInput [matDatepicker]="picker6"  formControlName="endEstimate">
+          <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+          <mat-datepicker #picker6></mat-datepicker>
+        </mat-form-field>
+      </div> -->
+
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>{{'startRequestPurchase'| translate }}</mat-label>
+          <input matInput [matDatepicker]="picker3"  formControlName="startRequestPurchase">
+          <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>{{'endRequestPurchase'| translate }}</mat-label>
+          <input matInput [matDatepicker]="picker4"  formControlName="endRequestPurchase">
+          <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+          <mat-datepicker #picker4></mat-datepicker>
         </mat-form-field>
       </div>
       <div class="col-md-3">
@@ -110,22 +129,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3">
-        <mat-form-field class="full-width">
-          <mat-label>{{'startDate'| translate }}</mat-label>
-          <input matInput [matDatepicker]="picker13"  formControlName="startDate">
-          <mat-datepicker-toggle matSuffix [for]="picker13"></mat-datepicker-toggle>
-          <mat-datepicker #picker13></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="col-md-3">
-        <mat-form-field class="full-width">
-          <mat-label>{{'endDate'| translate }}</mat-label>
-          <input matInput [matDatepicker]="picker14"  formControlName="endDate">
-          <mat-datepicker-toggle matSuffix [for]="picker14"></mat-datepicker-toggle>
-          <mat-datepicker #picker14></mat-datepicker>
-        </mat-form-field>
-      </div>
+     
       <div class="col-md-3">
         <mat-form-field class="full-width">
           <mat-label>{{'startPO'| translate }}</mat-label>
@@ -140,6 +144,22 @@
           <input matInput [matDatepicker]="picker16"  formControlName="endPO">
           <mat-datepicker-toggle matSuffix [for]="picker16"></mat-datepicker-toggle>
           <mat-datepicker #picker16></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>{{'startDate'| translate }}</mat-label>
+          <input matInput [matDatepicker]="picker13"  formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="picker13"></mat-datepicker-toggle>
+          <mat-datepicker #picker13></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width">
+          <mat-label>{{'endDate'| translate }}</mat-label>
+          <input matInput [matDatepicker]="picker14"  formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="picker14"></mat-datepicker-toggle>
+          <mat-datepicker #picker14></mat-datepicker>
         </mat-form-field>
       </div>
     </div>
