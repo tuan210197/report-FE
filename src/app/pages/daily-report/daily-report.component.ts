@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy,inject  } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -17,8 +17,8 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-
-import PptxGenJS from 'pptxgenjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { AppTranslateService } from '../../services/translate.service';
 
 interface dataTable {
   user: string;
@@ -50,6 +50,7 @@ interface dataTable {
     MatDatepickerModule,
     MatNativeDateModule, // Nếu dùng Moment.js thì thay bằng MatMomentDateModule
     FormsModule, MatSelectModule, ReactiveFormsModule, CommonModule,
+    TranslateModule 
   ],
   templateUrl: './daily-report.component.html',
   styleUrl: './daily-report.component.css'
@@ -72,8 +73,9 @@ export class DailyReportComponent {
     this.getAllDailyReport();
     this.dataSource.paginator = this.paginator;
   }
+  translateService = inject(AppTranslateService);
 
-
+ 
   categories: any[] = []; // Mảng lưu danh sách danh mục
   selectedCategory: string | null = null; // Lưu ID danh mục được chọn
   selectedProject: string | null = null; // Lưu ID dự án được chọn
@@ -116,6 +118,7 @@ export class DailyReportComponent {
 
     return isValid;
   }
+
 
   getProjectName() {
     this.share.getProjectName().subscribe((data: any) => {
@@ -186,7 +189,7 @@ export class DailyReportComponent {
       this.share.addNewDailyReport(val).subscribe((data: any) => {
         this.getAllDailyReport();
         if (data.code === '200') {
-          Swal.fire('Success', 'Tạo Báo Cáo Thành Công', 'info')
+          Swal.fire('Success', 'Tạo Báo Cáo Thành Công </br> 建立成功報告', 'info')
         }
       });
     } else {
@@ -296,7 +299,7 @@ export class DailyReportComponent {
       this.generateExcel(data);
       // this.exportToPptx(data);
     } else {
-      Swal.fire('Error', 'Vui lòng chọn ngày xuất báo cáo', 'error');
+      Swal.fire('Error', 'Vui lòng chọn ngày xuất báo cáo </br> 請選擇報表匯出日期', 'error');
     }
   }
 
@@ -360,71 +363,7 @@ export class DailyReportComponent {
     saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(this.form.value.exportDate) + '.xlsx');
   }
 
-  exportToPptx(data: any[]) {
-    console.log('Dữ liệu nhận được:', data);
-  
-    if (!data || data.length === 0) {
-      console.warn('Không có dữ liệu để xuất PowerPoint.');
-      return;
-    }
-  
-    let pptx = new PptxGenJS();
-    let slide = pptx.addSlide();
-  
-    // Tiêu đề slide
-    slide.addText('BÁO CÁO DAILY REPORT', {
-      x: 1, y: 0.3, w: 8, h: 0.5, fontSize: 24, bold: true, align: 'center'
-    });
-  
-    // Định dạng dữ liệu bảng
-    let tableData: any[] = [];
-  
-    // Header
-    tableData.push([
-      { text: 'STT', bold: true }, { text: 'Ngày báo cáo', bold: true }, { text: 'Người báo cáo', bold: true },
-      { text: 'Bên Yêu Cầu', bold: true }, { text: 'Tên Dự án', bold: true }, { text: 'Loại Dự Án', bold: true },
-      { text: 'Địa Điểm', bold: true }, { text: 'Nhà thầu', bold: true }, { text: 'Số Công Nhân', bold: true },
-      { text: 'Tiến Độ (%)', bold: true }, { text: 'Số Lượng', bold: true }, { text: 'Hoàn Thành', bold: true },
-      { text: 'Còn Lại', bold: true }, { text: 'Ngày Bắt Đầu', bold: true }, { text: 'Ngày Kết Thúc', bold: true },
-      { text: 'Thực Thi', bold: true }
-    ]);
-  
-    // Dữ liệu từng dòng
-    data.forEach((item, index) => {
-      tableData.push([
-        { text: (index + 1).toString() },
-        { text: item.createAt ? this.convertToCustomFormatDate(item.createAt) : 'N/A' },
-        { text: item.fullName || 'N/A' },
-        { text: item.requester || 'N/A' },
-        { text: item.projectName || 'N/A' },
-        { text: item.categoryName || 'N/A' },
-        { text: item.address || 'N/A' },
-        { text: item.contractor || 'N/A' },
-        { text: item.numberWorker?.toString() || '0' },
-        { text: item.progress?.toString() || '0' },
-        { text: item.quantity?.toString() || '0' },
-        { text: item.quantityCompleted?.toString() || '0' },
-        { text: item.quantityRemain?.toString() || '0' },
-        { text: item.startDate ? this.convertToCustomFormatDate(item.startDate) : 'N/A' },
-        { text: item.endDate ? this.convertToCustomFormatDate(item.endDate) : 'N/A' },
-        { text: item.implement || 'N/A' },
-      ]);
-    });
-  
-    // Thêm bảng vào slide
-    slide.addTable(tableData, {
-      x: 0.3, y: 1, w: 9,
-      colW: [0.5, 1, 1.5, 1.5, 2, 1.5, 2, 1.5, 1, 1, 1, 1, 1, 1, 1, 2], // Kích thước cột
-      border: { type: 'solid', color: '000000' },
-      fontSize: 12,
-      align: 'left',
-    });
-  
-    // Xuất file PowerPoint
-    pptx.writeFile({ fileName: 'Daily_Report.pptx' })
-      .then(() => console.log('Xuất file thành công'))
-      .catch(error => console.error('Lỗi khi xuất file:', error));
-  }
+
   
   
 }

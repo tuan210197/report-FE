@@ -1,10 +1,14 @@
-import { Component, OnInit, } from '@angular/core';
+import { Component, OnInit,inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { firstValueFrom } from 'rxjs';
 import Drilldown from 'highcharts/modules/drilldown';
 import { ShareService } from '../../services/share.service';
+
+import { TranslateModule } from '@ngx-translate/core';
+import { AppTranslateService } from '../../services/translate.service';
+
 if (!Highcharts.Chart.prototype.addSeriesAsDrilldown) {
   Drilldown(Highcharts);
 }
@@ -22,7 +26,7 @@ interface ChartData {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HighchartsChartModule],
+  imports: [HighchartsChartModule, TranslateModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -39,6 +43,12 @@ export class HomeComponent implements OnInit {
     private share: ShareService,
     private authService: AuthService
   ) { }
+    translateService = inject(AppTranslateService);
+  
+    switchLanguage() {
+      this.translateService.switchLanguage();
+    }
+  
   ngOnInit(): void {
     this.loadChartData();
   }
@@ -72,7 +82,7 @@ export class HomeComponent implements OnInit {
        
       
         title: {
-          text: 'PROJECT MANAGEMENT'
+          text: ''
         },
         accessibility: {
           enabled: false, // Disable accessibility to remove the warning

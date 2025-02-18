@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +15,10 @@ import { MatOptionModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { PasswordComponent } from '../password/password.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { AppTranslateService } from '../../services/translate.service';
+
+
 
 export interface List {
   fullName: string,
@@ -32,7 +35,7 @@ export interface List {
   selector: 'app-profile',
   standalone: true,
   imports: [MatCardModule, MatInputModule, MatFormFieldModule, MatGridListModule, MatDatepickerModule,
-    MatNativeDateModule, ReactiveFormsModule, MatSelectModule, MatOptionModule, CommonModule,],
+    MatNativeDateModule, ReactiveFormsModule, MatSelectModule, MatOptionModule, CommonModule,TranslateModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -72,7 +75,11 @@ export class ProfileComponent implements OnInit {
       })
     });
   }
-
+    translateService = inject(AppTranslateService);
+  
+    switchLanguage() {
+      this.translateService.switchLanguage();
+    }
   async openChangePassword() {
     const rawData: any = await firstValueFrom(this.share.getCurrentUser());
     this.dialog.open(PasswordComponent, {

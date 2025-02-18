@@ -3,7 +3,7 @@
     <div class="card-header card-header-danger">
         <br>
         <br>
-        <h1 class="title">Create Project</h1>
+        <h1 class="title">{{'createProject'| translate}}</h1>
         <br>
     </div>
     <form [formGroup]="form" >
@@ -11,7 +11,7 @@
             <!-- Project Name -->
             <div class="col-md-12">
                 <mat-form-field class="full-width">
-                    <mat-label>Project Name</mat-label>
+                    <mat-label>{{'TEN_DU_AN' | translate}}</mat-label>
                     <input matInput formControlName="projectName">
                 </mat-form-field>
             </div>
@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col-md-6">
                 <mat-form-field class="full-width">
-                    <mat-label>Category</mat-label>
+                    <mat-label>{{'LOAI_HINH_DU_AN' | translate}} </mat-label>
                         <mat-select formControlName="categoryId" >
                             <mat-option *ngFor="let category of categories" [value]="category.categoryId">
                               {{ category.categoryName }}
@@ -32,7 +32,7 @@
             </div>
             <div class="col-md-6">
                 <mat-form-field class="full-width"> 
-                    <mat-label>Sub Member</mat-label>
+                    <mat-label>{{'submember' | translate}} </mat-label>
                     <mat-select formControlName="submember" multiple >
                         <mat-option *ngFor="let user of users" [value]="user">
                             {{ user.fullName }}
@@ -45,7 +45,7 @@
         <div class="row">
             <div class="col-md-12">
                 <mat-form-field class="full-width">
-                  <mat-label>Start Date</mat-label>
+                  <mat-label>{{'startDate'| translate}}</mat-label>
                   <input matInput [matDatepicker]="picker" placeholder="Select a date" formControlName="startDate">
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
@@ -56,13 +56,13 @@
             <!-- Description -->
             <div class="col-md-12">
                 <mat-form-field class="full-width" >
-                    <mat-label>Description</mat-label>
+                    <mat-label>{{'description'| translate}}</mat-label>
                     <textarea matInput formControlName="description"></textarea>
                 </mat-form-field>
             </div>
         </div>
         
-        <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="createProject()">Create</button>
+        <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="createProject()">{{'CREATE_PROJECT'| translate}}</button>
         <div class="clearfix"></div>
     </form>
 </div>

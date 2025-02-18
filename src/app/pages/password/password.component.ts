@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, inject } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ShareService } from '../../services/share.service';
@@ -7,11 +7,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { customPasswordValidator } from '../../services/password.validator';
-import { NgModule } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 
+import { TranslateModule } from '@ngx-translate/core';
+import { AppTranslateService } from '../../services/translate.service';
 
 
 
@@ -25,7 +24,7 @@ export interface List {
 @Component({
   selector: 'app-password',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, CommonModule],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, CommonModule,TranslateModule],
   templateUrl: './password.component.html',
   styleUrl: './password.component.css'
 })
@@ -45,7 +44,11 @@ export class PasswordComponent implements OnInit {
       email: [''],
     });
   }
-
+    translateService = inject(AppTranslateService);
+  
+    switchLanguage() {
+      this.translateService.switchLanguage();
+    }
 
   getEmail() {
     this.form.patchValue({

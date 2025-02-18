@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -16,6 +16,8 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatDialogRef } from '@angular/material/dialog';
 
+import { TranslateModule } from '@ngx-translate/core';
+import { AppTranslateService } from '../../services/translate.service';
 
 
 @Component({
@@ -30,7 +32,11 @@ import { MatDialogRef } from '@angular/material/dialog';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule, // Nếu dùng Moment.js thì thay bằng MatMomentDateModule
-    FormsModule, MatSelectModule, ReactiveFormsModule, CommonModule
+    FormsModule, 
+    MatSelectModule, 
+    ReactiveFormsModule, 
+    CommonModule,
+    TranslateModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter },
   { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },],
@@ -65,7 +71,11 @@ export class AddProjectComponent implements OnInit {
       startDate: []
     });
   }
-
+    translateService = inject(AppTranslateService);
+  
+    switchLanguage() {
+      this.translateService.switchLanguage();
+    }
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories

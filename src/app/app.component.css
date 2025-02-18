@@ -1,24 +1,50 @@
 .panel {
-    background: #f1f1f1;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    overflow: hidden;  
-    transition: all 0.3s ease;
-  }
-  
-  mat-icon {
-    transition: transform 200ms ease-in-out;
-  }
-  
-  .panel:hover mat-icon {
-    transform: rotate(180deg);  
-  } 
+  background: #f1f1f1;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
 
-  .sidebar{
-    width: 100%; /* Sidebar chiếm toàn bộ chiều ngang */
-    
-  }
+mat-icon {
+  transition: transform 200ms ease-in-out;
+}
+
+.panel:hover mat-icon {
+  transform: rotate(180deg);
+}
+
+.sidebar {
+  width: 100%;
+  /* Sidebar chiếm toàn bộ chiều ngang */
+
+}
+
+.language-switch {
+  position: absolute;
+  /* Đặt ở vị trí cố định trong trang */
+  top: 20px;
+  /* Cách trên 20px */
+  right: 20px;
+  /* Cách phải 20px */
+  z-index: 1000;
+  /* Đảm bảo nó luôn nằm trên các thành phần khác */
+}
+
+
+.language-switch mat-form-field {
+  width: 3vw;      
+  min-width: 130px;   /* Đặt chiều rộng tối thiểu để hiển thị rõ ràng */
+  font-size: 0.7em;    /* Đặt font-size cho ô select */
+  margin: 0;          /* Loại bỏ margin mặc định */
+}
+
+
+
+.language-switch mat-option {
+  font-size: 0.7em;   /* Đặt kích thước font cho các lựa chọn */
+}

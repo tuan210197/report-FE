@@ -5,7 +5,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header card-header-danger">
-                    <h2 class="card-title">Thông Tin Cá Nhân</h2>
+                    <h2 class="card-title">{{'profile'|translate }}</h2>
                 </div>
                 <div class="card-body">
                     <form [formGroup]="form">
@@ -13,13 +13,13 @@
 
                             <div class="col-md-6">
                                 <mat-form-field class="full-width">
-                                    <mat-label>Tên Nhân Viên</mat-label>
+                                    <mat-label>{{'fullname'|translate}}</mat-label>
                                     <input matInput formControlName="fullName">
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field class="full-width">
-                                    <mat-label>email</mat-label>
+                                    <mat-label>{{'email'|translate}}</mat-label>
                                     <input matInput formControlName="email" readonly>
                                 </mat-form-field>
                             </div>
@@ -29,20 +29,20 @@
 
                             <div class="col-md-4">
                                 <mat-form-field class="full-width">
-                                    <mat-label>Mã Nhân Viên</mat-label>
+                                    <mat-label>{{'employeeCode'|translate}}</mat-label>
                                     <input matInput formControlName="employeeCode">
                                 </mat-form-field>
                             </div>
                             <div class="col-md-4" [formGroupName]="'department'">
                                 <mat-form-field class="full-width">
-                                    <mat-label>Phòng Ban</mat-label>
+                                    <mat-label>{{'department'|translate}}</mat-label>
                                     <input matInput formControlName="deptName" readonly>
                                 </mat-form-field>
                             </div>
                             <div class="col-md-4">
                                 <mat-form-field class="full-width">
-                                    <!-- <mat-label>Giới Tính</mat-label>
-                                    <input matInput formControlName="gender"> -->
+                                    <mat-label>{{'gender'|translate}}</mat-label>
+                              
                                     <mat-select formControlName="gender">
                                         <mat-option *ngFor="let gender of genders" [value]="gender.value">
                                             {{ gender.viewValue }}
@@ -56,7 +56,7 @@
 
                             <div class="col-md-4">
                                 <mat-form-field class="full-width">
-                                    <mat-label>Ngày Sinh</mat-label>
+                                    <mat-label>{{'dateOfBirth'|translate}}</mat-label>
                                     <input matInput [matDatepicker]="picker" formControlName="birthday">
                                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                     <mat-datepicker #picker></mat-datepicker>
@@ -64,23 +64,20 @@
                             </div>
                             <div class="col-md-4">
                                 <mat-form-field class="full-width">
-                                    <mat-label>Số Điện Thoại</mat-label>
+                                    <mat-label>{{'phone'|translate}}</mat-label>
                                     <input matInput type="text" formControlName="mobile">
                                 </mat-form-field>
                             </div>
                             <div class="col-md-4" [formGroupName]="'role'">
                                 <mat-form-field class="full-width">
-                                    <mat-label>Chức Vụ</mat-label>
+                                    <mat-label>{{'Position'|translate}}</mat-label>
                                     <input matInput type="text" formControlName="name" readonly>
                                 </mat-form-field>
                             </div>
                         </div>
 
-                        <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="update()">Cập
-                            Nhật Thông
-                            Tin</button>
-                        <button type="button" class="btn btn-primary" (click)="openChangePassword()">Đổi Mật
-                            Khẩu</button>
+                        <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="update()">{{'update_profile'|translate }}</button>
+                        <button type="button" class="btn btn-primary" (click)="openChangePassword()">{{'change_password'|translate }}</button>
                         <div class="clearfix"></div>
 
 

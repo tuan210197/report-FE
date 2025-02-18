@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, OnDestroy, OnInit , inject } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -19,7 +19,8 @@ import Swal from 'sweetalert2';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
-
+import { AppTranslateService } from '../../services/translate.service';
+import { TranslateModule } from '@ngx-translate/core';
 export interface table {
   projectName: string;
   pic: string;
@@ -43,7 +44,9 @@ export interface table {
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    ReactiveFormsModule, CommonModule
+    ReactiveFormsModule, 
+    CommonModule,
+    TranslateModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter },
   { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },],
@@ -97,6 +100,11 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     this.searchSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
       this.performSearch(searchValue);
     });
+  }
+  translateService = inject(AppTranslateService);
+
+  switchLanguage() {
+    this.translateService.switchLanguage();
   }
 
   ngOnDestroy() {
