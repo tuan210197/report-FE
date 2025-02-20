@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy,inject  } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -33,8 +33,6 @@ interface dataTable {
   create_at: string;
   quantity: number;
   numberWorker: number;
-
-
 }
 
 @Component({
@@ -50,7 +48,7 @@ interface dataTable {
     MatDatepickerModule,
     MatNativeDateModule, // Nếu dùng Moment.js thì thay bằng MatMomentDateModule
     FormsModule, MatSelectModule, ReactiveFormsModule, CommonModule,
-    TranslateModule 
+    TranslateModule
   ],
   templateUrl: './daily-report.component.html',
   styleUrl: './daily-report.component.css'
@@ -75,7 +73,7 @@ export class DailyReportComponent {
   }
   translateService = inject(AppTranslateService);
 
- 
+
   categories: any[] = []; // Mảng lưu danh sách danh mục
   selectedCategory: string | null = null; // Lưu ID danh mục được chọn
   selectedProject: string | null = null; // Lưu ID dự án được chọn
@@ -299,7 +297,15 @@ export class DailyReportComponent {
       this.generateExcel(data);
       // this.exportToPptx(data);
     } else {
-      Swal.fire('Error', 'Vui lòng chọn ngày xuất báo cáo </br> 請選擇報表匯出日期', 'error');
+
+      const date: any = await firstValueFrom(this.share.getMaxDateExport());
+
+      var val2 = {
+        date: date.data
+      }
+      const data: any = await firstValueFrom(this.share.getExportDailyReport(val2));
+      this.generateExcel(data);
+
     }
   }
 
@@ -311,7 +317,7 @@ export class DailyReportComponent {
         'Ngày Kết Thúc', 'Báo Cáo Công Việc Hàng Ngày']
     ];
     // 2️⃣ Chuyển đổi dữ liệu thành định dạng mảng theo đúng thứ tự cột
-    console.log(data);
+
     const exportData = data.map((item, index) => [
       index + 1,
       this.convertToCustomFormatDate(item.createAt),  // Chuyển đổi format ngày
@@ -358,14 +364,21 @@ export class DailyReportComponent {
     const workbook: XLSX.WorkBook = { Sheets: { 'Báo cáo': worksheet }, SheetNames: ['Báo cáo'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+   
+    if (this.form.value.exportDate === '' || this.form.value.exportDate === null) {
+      console.log(data[0].createAt)
+      console.log(this.form.value.exportDate )
+      saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(data[0].createAt) + '.xlsx');
+    }else{
+      console.log(this.form.value.exportDate)
+      saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(this.form.value.exportDate) + '.xlsx');
 
-    // 6️⃣ Lưu file xuống máy với tên rõ ràng
-    saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(this.form.value.exportDate) + '.xlsx');
+    }
   }
 
 
-  
-  
+
+
 }
 
 

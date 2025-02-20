@@ -27,9 +27,9 @@ mat-icon {
 .language-switch {
   position: absolute;
   /* Đặt ở vị trí cố định trong trang */
-  top: 20px;
+  top: 8px;
   /* Cách trên 20px */
-  right: 20px;
+  right: 25px;
   /* Cách phải 20px */
   z-index: 1000;
   /* Đảm bảo nó luôn nằm trên các thành phần khác */

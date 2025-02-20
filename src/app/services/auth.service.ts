@@ -19,10 +19,10 @@ export class AuthService {
 
 
   constructor(private http: HttpClient, private router: Router) { }
-  login(email: string, password: string): Promise<boolean> {
+  login(employeeCode: string, password: string): Promise<boolean> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    return this.http.post<any>(this.apiUrl + '/user/login', { email, password }, { headers, withCredentials: true })
+    return this.http.post<any>(this.apiUrl + '/user/login', { employeeCode, password }, { headers, withCredentials: true })
       .toPromise()
       .then(response => {
         console.log('Login successful:', response);
@@ -37,8 +37,7 @@ export class AuthService {
 
 
   logout() {
-    debugger;
-    return this.http.post(this.apiUrl + '/user/logout', {}, { withCredentials: true });
+    return this.http.post(this.apiUrl + '/user/logout', {}, { withCredentials: true , responseType: 'text' });
   }
 
   // Gọi API refreshToken

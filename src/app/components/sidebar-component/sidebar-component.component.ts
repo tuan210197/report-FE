@@ -189,12 +189,15 @@ export class SidebarComponentComponent {
   }
 
   logout() {
+    
     this.auth.logout().subscribe(() => {
       console.log('Logout successful');
       localStorage.clear();
       sessionStorage.clear();
       this.router.navigateByUrl('/login');
+      window.location.reload();
     });
+  
   }
 
   @Input() set collapsed(val: boolean) {

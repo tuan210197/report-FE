@@ -3,13 +3,13 @@
     <div class="login-card">
         <div class="logo-container text-center">
             <a [routerLink]="['/home']">
-                <img src="../../logo.jpg" class="logo" alt="Logo" />
+                <img src="../../logo.png" class="logo" alt="Logo" />
             </a>
         </div>
         <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Username</mat-label>
-                <input matInput formControlName="email" />
+                <input matInput formControlName="employeeCode" />
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">

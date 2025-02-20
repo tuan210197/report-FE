@@ -90,6 +90,10 @@ export class ShareService {
   getExportDailyReport(data: any) {
     return this.http.post(this.apiUrl + '/daily-report/export', data);
   }
+
+  getMaxDateExport() {
+    return this.http.get(this.apiUrl + '/daily-report/get-max-export-date');
+  }
   /*end daily report */
 
   /*implement */

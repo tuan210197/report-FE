@@ -39,15 +39,15 @@ export class LoginComponent {
   ngOnInit(): void {
     // Initialize the form with FormBuilder
     this.loginForm = this.fb.group({
-      email: [''],
+      employeeCode: [''],
       password: ['']
     });
   }
 
   async onLogin() {
-    const { email, password } = this.loginForm.value;
+    const { employeeCode, password } = this.loginForm.value;
     try {
-      const success = await this.authService.login(email, password);
+      const success = await this.authService.login(employeeCode, password);
       if (success) {
         this.router.navigateByUrl('/home');
       } else {

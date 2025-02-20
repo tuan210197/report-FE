@@ -42,9 +42,9 @@ export interface List {
 export class ProfileComponent implements OnInit {
 
   genders = [
-    { value: 0, viewValue: 'Nữ' },
-    { value: 1, viewValue: 'Nam' },
-    { value: 2, viewValue: 'Khác' }
+    { value: 0, viewValue: 'Nữ/女 ' },
+    { value: 1, viewValue: 'Nam/男' },
+    { value: 2, viewValue: 'Khác/其他' }
   ];
 
   formList: List[] = [];
