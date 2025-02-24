@@ -19,6 +19,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppTranslateService } from '../../services/translate.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 interface dataTable {
   user: string;
@@ -48,7 +49,8 @@ interface dataTable {
     MatDatepickerModule,
     MatNativeDateModule, // Nếu dùng Moment.js thì thay bằng MatMomentDateModule
     FormsModule, MatSelectModule, ReactiveFormsModule, CommonModule,
-    TranslateModule
+    TranslateModule,
+    MatAutocompleteModule
   ],
   templateUrl: './daily-report.component.html',
   styleUrl: './daily-report.component.css'
@@ -95,8 +97,10 @@ export class DailyReportComponent {
       startDate: [''],
       endDate: [''],
       implement: ['', [Validators.required]],
-      exportDate: ['']
+      exportDate: [''],
+      
     });
+    
   }
   checkFormErrors(formGroup: FormGroup): boolean {
     let isValid = true;
@@ -178,8 +182,8 @@ export class DailyReportComponent {
         quantityRemain: this.form.value.quantityRemain,
         contractor: this.form.value.contractor,
         numberWorker: this.form.value.numberWorker,
-        startDate: this.form.value.startDate,
-        endDate: this.form.value.endDate,
+        startDate: this.convertToCustomFormatDate(this.form.value.startDate),
+        endDate: this.convertToCustomFormatDate(this.form.value.endDate),
         implement: this.form.value.implement,
 
       }
@@ -248,6 +252,7 @@ export class DailyReportComponent {
     const report: any = await firstValueFrom(this.share.getDailyReportByProjecetId(val));
 
     if (report.data !== null && 'reportId' in report.data) {
+      console.log("oke")
       this.form.patchValue(
         {
           requester: report.data.requester, // Bắt buộc nhập
@@ -267,6 +272,7 @@ export class DailyReportComponent {
       );
     }
     if (report.data !== null && 'projectId' in report.data) {
+      console.log(report.data)
       this.form.patchValue(
         {
           projectId: report.data.projectId, // Bắt buộc nhập
@@ -312,9 +318,11 @@ export class DailyReportComponent {
   private generateExcel(data: any[]) {
 
     const customHeaders = [
-      ['STT', 'Ngày báo cáo', 'Người báo cáo', 'Bên Yêu Cầu', 'Tên Dự án', 'Loại Dự Án', 'Địa Điểm Làm Việc', 'Nhà thầu',
-        'Số Công Nhân', 'Tiến Độ (%)', 'Số Lượng', 'Hoàn Thành', 'Còn Lại', 'Ngày Bắt Đầu',
-        'Ngày Kết Thúc', 'Báo Cáo Công Việc Hàng Ngày']
+      ['STT/序号', 'Ngày báo cáo/报告日期', 'Người báo cáo/报告人', 'Bên Yêu Cầu/需求用户', 'Tên Dự án/项目名称',
+        'Loại Dự Án/项目类型', 'Địa Điểm Làm Việc/工作地点', 'Nhà thầu/供应商', 'Số Công Nhân/人工数量',
+        'Tiến Độ (%) /进度(%)', 'Số Lượng/数量', 'Số Lượng Hoàn Thành/已完成', 'Số Lượng Chưa Hoàn Thành/未完成',
+        'Ngày Bắt Đầu/开始日期', 'Ngày Dự Kiến Kết Thúc/结束日期', 'Báo Cáo Công Việc Hàng Ngày/每日工作报告'
+      ]
     ];
     // 2️⃣ Chuyển đổi dữ liệu thành định dạng mảng theo đúng thứ tự cột
 
@@ -342,21 +350,21 @@ export class DailyReportComponent {
 
     // 4️⃣ Định dạng cột (Độ rộng)
     worksheet['!cols'] = [
-      { wch: 5 },   // STT
-      { wch: 20 },  // Ngày báo cáo
-      { wch: 20 },  // Ngày báo cáo
-      { wch: 20 },  // Người báo cáo
-      { wch: 50 },  // Dự án
-      { wch: 30 },  // Loại công việc
-      { wch: 30 },  // Địa chỉ
-      { wch: 20 },  // Nhà thầu
-      { wch: 20 },  // Số công nhân
-      { wch: 20 },  // Tiến độ
-      { wch: 15 },  // Số lượng
-      { wch: 15 },  // Hoàn thành
-      { wch: 15 },  // Còn lại
-      { wch: 30 },  // Ngày bắt đầu
-      { wch: 30 },  // Ngày kết thúc
+      { wch: 10 },   // STT
+      { wch: 30 },  // Ngày báo cáo
+      { wch: 40 },  // Ngày báo cáo
+      { wch: 30 },  // Người báo cáo
+      { wch: 60 },  // Dự án
+      { wch: 70 },  // Loại công việc
+      { wch: 40 },  // Địa chỉ
+      { wch: 30 },  // Nhà thầu
+      { wch: 30 },  // Số công nhân
+      { wch: 30 },  // Tiến độ
+      { wch: 25 },  // Số lượng
+      { wch: 25 },  // Hoàn thành
+      { wch: 25 },  // Còn lại
+      { wch: 40 },  // Ngày bắt đầu
+      { wch: 40 },  // Ngày kết thúc
       { wch: 100 }   // Thực thi dự án
     ];
 
@@ -364,12 +372,12 @@ export class DailyReportComponent {
     const workbook: XLSX.WorkBook = { Sheets: { 'Báo cáo': worksheet }, SheetNames: ['Báo cáo'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-   
+
     if (this.form.value.exportDate === '' || this.form.value.exportDate === null) {
       console.log(data[0].createAt)
-      console.log(this.form.value.exportDate )
+      console.log(this.form.value.exportDate)
       saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(data[0].createAt) + '.xlsx');
-    }else{
+    } else {
       console.log(this.form.value.exportDate)
       saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(this.form.value.exportDate) + '.xlsx');
 

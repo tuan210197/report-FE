@@ -8,17 +8,18 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, '../../i18n/', '.json');
 }
-
 
   export const appConfig: ApplicationConfig = {
     providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(), provideAnimationsAsync(),
     provideHttpClient(
       withInterceptorsFromDi()
     ),
+    { provide: MAT_DATE_LOCALE, useValue: 'lt-LT' },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

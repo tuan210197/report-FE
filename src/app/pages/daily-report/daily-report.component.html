@@ -19,6 +19,16 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+        <!-- <mat-form-field class="full-width">
+          <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
+          <input type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="setlectionChange($event) ">
+            <mat-option *ngFor="let project of projects" [value]="project.projectId">
+              {{ project.projectName }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field> -->
+        
       </mat-grid-tile>
       <mat-grid-tile>
         <mat-form-field class="full-width">

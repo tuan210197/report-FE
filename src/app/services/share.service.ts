@@ -39,6 +39,9 @@ export class ShareService {
   getStaff() {
     return this.http.get(this.apiUrl + '/staff/get-staff');
   }
+  getAllStaff() {
+    return this.http.get(this.apiUrl + '/staff/get-all');
+  }
   addProject(data: any) {
     return this.http.post(this.apiUrl + '/project/add', data)
   }
@@ -58,6 +61,9 @@ export class ShareService {
   }
   search(data: any) {
     return this.http.post(this.apiUrl + '/project/search', data)
+  }
+  searchByName(data: any) {
+    return this.http.post(this.apiUrl + '/project/search-by-name', data)
   }
   /* End Project*/
 
@@ -130,6 +136,24 @@ export class ShareService {
 
   resetPassword(data: any) {
     return this.http.post(this.apiUrl + '/user/password/change', data)
+  }
+
+  /**file upload */
+  uploadFile(data:any) {
+
+    return this.http.post(this.apiUrl + '/files/upload', data, { withCredentials: true });
+  }
+
+  loadFiles() {
+   return this.http.get(this.apiUrl+'/files/get-all', {withCredentials:true})
+  }
+  loadDocument(){
+    return this.http.get(this.apiUrl + '/files/get-all')
+  }
+  downloadFile(fileName: string) {
+    return this.http.get(`/api/files/download/${fileName}`, {
+      responseType: 'blob' // Quan trọng để tải file nhị phân
+    });
   }
 }
 

@@ -1,0 +1,104 @@
+<h2>Upload Tài Liệu</h2>
+
+
+<div class="container-fluid">
+
+  <div class="card-header card-header-danger">
+
+    <h2 class="title">{{ 'DAILY_REPORT' | translate }}</h2>
+  </div>
+  <form [formGroup]="formGroup">
+
+    <mat-grid-list cols="3" class="row" rowHeight="100px">
+      <mat-grid-tile>
+        <!-- <button>
+          <input type="file" (change)="onFileSelected($event)">
+
+        </button> -->
+        <input type="file" id="fileInput" (change)="onFileSelected($event)" hidden>
+        <button class="button" (click)="triggerFileInput()">
+            <span class="btn__icon">
+                <svg stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                    <path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1"></path>
+                    <path d="M9 15l3 -3l3 3"></path>
+                    <path d="M12 12l0 9"></path>
+                </svg>
+            </span>
+            <span class="btn__text">Upload</span>
+        </button>
+        <span id="fileName" class="file-name"></span>
+        
+        
+        
+
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
+          <input type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto" >
+           <mat-autocomplete #auto="matAutocomplete"  (optionSelected)="selectionChange($event)">
+            <mat-option *ngFor="let project of projects" [value]="project.projectId">
+              {{ project.projectName }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <button type="button" class="btn btn-success" (click)="uploadFile()" [disabled]="!selectedFile">Upload <mat-icon>upload</mat-icon></button>
+
+      </mat-grid-tile>
+
+    </mat-grid-list>
+
+
+  </form>
+
+   <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'STT' | translate}}</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          {{ i + 1+ paginator.pageIndex * paginator.pageSize }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="projectName">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color">{{'BEN_YEU_CAU' | translate}}</th>
+        <td mat-cell *matCellDef="let element"> {{element.projectName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fileName">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'TEN_DU_AN' | translate}}</th>
+        <td mat-cell *matCellDef="let element"> {{element.fileName}} </td>
+      </ng-container>
+      <ng-container matColumnDef="uploadAt">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'LOAI_HINH_DU_AN' | translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.uploadAt}} </td>
+      </ng-container>
+      <!-- <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'DIA_DIEM_THI_CONG' | translate}}</th>
+        <td mat-cell *matCellDef="let element"> <mat-icon >download</mat-icon></td>
+      </ng-container> -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color" class="mat-column-name6"> {{'implements' | translate}} </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon class="action-icon" (click)="downloadFile(element)">download</mat-icon>
+        </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div class="paginator-container">
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+      </mat-paginator>
+    </div>
+
+
+  </div>  
+
+</div>

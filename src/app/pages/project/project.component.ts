@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, OnDestroy, OnInit , inject } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -21,6 +21,11 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
 import { AppTranslateService } from '../../services/translate.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+
+
+
 export interface table {
   projectName: string;
   pic: string;
@@ -29,6 +34,8 @@ export interface table {
   projectId: number;
   completed: boolean;
   canceled: boolean;
+  startDate:string;
+  endDate:string;
 }
 
 @Component({
@@ -44,9 +51,11 @@ export interface table {
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     CommonModule,
-    TranslateModule
+    TranslateModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter },
   { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },],
@@ -57,14 +66,18 @@ export interface table {
 })
 export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   tableList: table[] = [];
-  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status', 'actions'];
+  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status','startDate','endDate',  'actions'];
   dataSource = new MatTableDataSource<table>(this.tableList);
   model: any;
   color = '#ADD8E6';
   selectedProjectId: number | null = null; // Biến lưu id của dự án
   inputText: string = '';
   form: FormGroup;
-  searchForm: FormGroup;
+  // searchForm: FormGroup;
+  users: any[] = [];
+  selectedUser: string | null = null;
+
+
   private searchSubject = new Subject<string>();
 
   private readonly debounceTimeMs = 500; // Set the debounce time (in milliseconds)
@@ -85,22 +98,69 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       startDate: [null],
       endDate: [null],
       startPO: [null],
-      endPO: [null]
+      endPO: [null],
+      user: [null],
+      inputText: ['']
+
     });
 
-    this.searchForm = this.fb.group({
-      search: ['']
-    });
+    // this.searchForm = this.fb.group({
+    //   search: ['']
+    // });
   }
   categories: any[] = []; // Mảng lưu danh sách danh mục
   selectedCategory: string | null = null; // Lưu ID danh mục được chọn
 
 
   ngOnInit() {
-    this.searchSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
-      this.performSearch(searchValue);
-    });
+    //     this.searchSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
+    //       console.log(searchValue);
+    //  });
+
+    this.form.get('inputText')?.valueChanges.pipe(
+      debounceTime(this.debounceTimeMs)
+    ).subscribe(searchValue => {
+      if (searchValue === '' || searchValue === null) {
+        this.loadProject();
+      } else {
+        this.performSearch(searchValue);
+
+      }
+    }
+    );
+
+
+    // this.performSearch(searchValue);
+
+
   }
+  async performSearch(searchValue: string) {
+
+    var val = {
+      projectName: searchValue.toUpperCase(),
+      categoryName: searchValue.toLocaleUpperCase()
+    }
+    const data = await firstValueFrom(this.share.search(val));
+    this.tableList = [];
+
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach(item => this.tableList.push({
+        projectName: item.projectName,
+        category: item.category,
+        pic: item.pic,
+        description: item.description,
+        projectId: item.projectId,
+        completed: item.completed,
+        canceled: item.canceled,
+        startDate:item.startDate,
+        endDate:item.endDate
+      }))
+    }
+
+    this.dataSource.data = this.tableList;
+    this.paginator.firstPage()
+  }
+
   translateService = inject(AppTranslateService);
 
   switchLanguage() {
@@ -114,7 +174,16 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.loadProject();
+    this.getStaff();
   }
+  getStaff() {
+    this.share.getAllStaff().subscribe((data: any) => {
+      this.users = data;
+    }, (error) => {
+      console.error('lỗi khi load staff', error);
+    })
+  }
+
   showDetails(data: number): void {
     this.dialog.open(ImplementComponent, {
       width: '60vw',
@@ -142,7 +211,9 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         description: item.description,
         projectId: item.projectId,
         completed: item.completed,
-        canceled: item.canceled
+        canceled: item.canceled,
+        startDate:item.startDate,
+        endDate:item.endDate
       }))
     }
 
@@ -160,39 +231,66 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   async getRecord(row: any) {
     const dataRow: any = await firstValueFrom(this.share.getProjectById(row.projectId));
-    this.form.patchValue(dataRow.data);
+    this.form.patchValue(
+      {
+        startReceiveRequest: dataRow.data.startReceiveRequest,
+        endReceiveRequest: dataRow.data.endReceiveRequest,
+        startRequestPurchase: dataRow.data.startRequestPurchase,
+        endRequestPurchase: dataRow.data.endRequestPurchase,
+        startEstimate: dataRow.data.startEstimate,
+        endEstimate: dataRow.data.endEstimate,
+        startQuotation: dataRow.data.startQuotation,
+        endQuotation: dataRow.data.endQuotation,
+        startSubmitBudget: dataRow.data.startSubmitBudget,
+        endSubmitBudget: dataRow.data.endSubmitBudget,
+        startPR: dataRow.data.startPR,
+        endPR: dataRow.data.endPR,
+        startDate: dataRow.data.startDate,
+        endDate: dataRow.data.endDate,
+        startPO: dataRow.data.startPO,
+        endPO: dataRow.data.endPO,
+        user: dataRow.data.pic?.uid.trim(),
+      }
+
+
+      // dataRow.data
+    );
     this.selectedProjectId = row.projectId;
-    console.log(dataRow)
+
   }
   clearData() {
     this.form.reset();
   }
   update() {
     var val = {
-      startReceiveRequest: this.form.value.startReceiveRequest,
-      endReceiveRequest: this.form.value.endReceiveRequest,
-      startRequestPurchase: this.form.value.startRequestPurchase,
-      endRequestPurchase: this.form.value.endRequestPurchase,
-      startEstimate: this.form.value.startEstimate,
-      endEstimate: this.form.value.endEstimate,
-      startQuotation: this.form.value.startQuotation,
-      endQuotation: this.form.value.endQuotation,
-      startSubmitBudget: this.form.value.startSubmitBudget,
-      endSubmitBudget: this.form.value.endSubmitBudget,
-      startPR: this.form.value.startPR,
-      endPR: this.form.value.endPR,
-      startDate: this.form.value.startDate,
-      endDate: this.form.value.endDate,
-      startPO: this.form.value.startPO,
-      endPO: this.form.value.endPO,
-      projectId: this.selectedProjectId
+      startReceiveRequest: this.convertToCustomFormat(this.form.value.startReceiveRequest),
+      endReceiveRequest: this.convertToCustomFormat(this.form.value.endReceiveRequest),
+      startRequestPurchase: this.convertToCustomFormat(this.form.value.startRequestPurchase),
+      endRequestPurchase: this.convertToCustomFormat(this.form.value.endRequestPurchase),
+      startEstimate: this.convertToCustomFormat(this.form.value.startEstimate),
+      endEstimate: this.convertToCustomFormat(this.form.value.endEstimate),
+      startQuotation: this.convertToCustomFormat(this.form.value.startQuotation),
+      endQuotation: this.convertToCustomFormat(this.form.value.endQuotation),
+      startSubmitBudget: this.convertToCustomFormat(this.form.value.startSubmitBudget),
+      endSubmitBudget: this.convertToCustomFormat(this.form.value.endSubmitBudget),
+      startPR: this.convertToCustomFormat(this.form.value.startPR),
+      endPR: this.convertToCustomFormat(this.form.value.endPR),
+      startDate: this.convertToCustomFormat(this.form.value.startDate),
+      endDate: this.convertToCustomFormat(this.form.value.endDate),
+      startPO: this.convertToCustomFormat(this.form.value.startPO),
+      endPO: this.convertToCustomFormat(this.form.value.endPO),
+      projectId: this.selectedProjectId,
+      pic: this.form.value.user
     }
-
+    console.log(val.startDate)
+    console.log(val.endDate)
     this.share.updateProject(val).subscribe((data: any) => {
       console.log(data)
       if (data.code === '200') {
         Swal.fire('update', 'update success', 'info')
       }
+      this.loadProject();
+      this.clearData();
     })
   }
   async updateStatus(element: any, event: any) {
@@ -234,31 +332,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
   onSearch() {
     this.searchSubject.next(this.inputText);
-  }
-  async performSearch(searchValue: string) {
-
-    var val = {
-      projectName: searchValue.toUpperCase(),
-      categoryName: searchValue.toLocaleUpperCase()
-    }
-    console.log(val)
-    const data = await firstValueFrom(this.share.search(val));
-    this.tableList = [];
-
-    if (Array.isArray(data) && data.length > 0) {
-      data.forEach(item => this.tableList.push({
-        projectName: item.projectName,
-        category: item.category,
-        pic: item.pic,
-        description: item.description,
-        projectId: item.projectId,
-        completed: item.completed,
-        canceled: item.canceled
-      }))
-    }
-
-    this.dataSource.data = this.tableList;
-    this.paginator.firstPage()
   }
 
 
@@ -346,11 +419,32 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       status: status
     }
     const update: any = await firstValueFrom(this.share.updateStatus(val));
-   
+
     Swal.fire('update', update.message, 'info')
     this.loadProject();
   }
+  convertToCustomFormat(dateString: string): string | null {
+    // Kiểm tra đầu vào có hợp lệ không
+    if (!dateString) return null;
 
+    try {
+      // Tạo đối tượng Date từ chuỗi đầu vào
+      const date = new Date(dateString);
+
+      // Lấy các thành phần ngày, giờ, phút
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+
+      // Kết hợp thành chuỗi định dạng "YYYY-MM-DD HH:mm"
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.error("Invalid date string:", error);
+      return null;
+    }
+  }
 }
 
 

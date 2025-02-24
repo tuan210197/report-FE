@@ -176,6 +176,7 @@ export class SidebarComponentComponent {
       profile: this.ngxTranslate.get('Profile'),
       project: this.ngxTranslate.get('control'),
       dailyReport: this.ngxTranslate.get('DAILY_REPORT'),
+      document: this.ngxTranslate.get('document'),
       logout: this.ngxTranslate.get('logout')
     }).subscribe(translations => {
       this.menuItems.set([
@@ -183,6 +184,7 @@ export class SidebarComponentComponent {
         { icon: 'account_circle', label: translations.profile, route: '/profile' },
         { icon: 'work', label: translations.project, route: '/project' },
         { icon: 'speaker_notes', label: translations.dailyReport, route: '/daily-report' },
+        { icon: 'folder', label: translations.document, route: '/files' },
         { icon: 'logout', label: translations.logout, action: () => this.logout() }
       ]);
     });
@@ -194,7 +196,7 @@ export class SidebarComponentComponent {
       console.log('Logout successful');
       localStorage.clear();
       sessionStorage.clear();
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl('/login'); 
       window.location.reload();
     });
   

@@ -12,6 +12,7 @@ import { WeeklyReportComponent } from './pages/weekly-report/weekly-report.compo
 import { MonthlyReportComponent } from './pages/monthly-report/monthly-report.component';
 import { AddProjectComponent } from './pages/add-project/add-project.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { FileUploadComponent } from './pages/file-upload/file-upload.component';
 
 
 
@@ -28,6 +29,7 @@ export const routes: Routes = [
     { path: 'lotery', component: LoteryComponent, canActivate: [AuthGuard] },
     { path: 'add-project', component: AddProjectComponent, canActivate: [AuthGuard] },
     { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [AuthGuard] },
+    { path: 'files', component: FileUploadComponent, canActivate: [AuthGuard] } // Redirect mặc định
 
 ];
 @NgModule({
