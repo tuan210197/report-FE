@@ -13,7 +13,6 @@ import { AddProjectComponent } from '../add-project/add-project.component';
 import { ImplementComponent } from '../implement/implement.component';
 import { ShareService } from '../../services/share.service';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Subject } from 'rxjs';
@@ -81,7 +80,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
 
   private readonly debounceTimeMs = 500; // Set the debounce time (in milliseconds)
-  constructor(private dialog: MatDialog, private share: ShareService, private authService: AuthService, private fb: FormBuilder) {
+  constructor(private dialog: MatDialog, private share: ShareService, private fb: FormBuilder) {
     this.form = this.fb.group({
       startReceiveRequest: [null],
       endReceiveRequest: [null],

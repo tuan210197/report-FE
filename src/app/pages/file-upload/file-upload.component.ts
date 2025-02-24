@@ -153,9 +153,9 @@ export class FileUploadComponent implements OnInit {
   }
 
    downloadFile(data: any) {
-    const url = `/api/files/download/${data.fileName}`;
+    // const url = `/api/files/download/${data.fileName}`;
 
-  this.http.get(url, { responseType: 'blob' }).subscribe(response => {
+  this.share.downloadFile(data.fileName).subscribe(response => {
     // Xác định loại file
     const contentType = response.type || 'application/octet-stream';
     

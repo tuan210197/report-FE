@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,7 +27,6 @@ import Swal from 'sweetalert2';
 export class ForgotPasswordComponent {
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
     private share: ShareService,
     private router: Router
   ) {

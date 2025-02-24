@@ -1,33 +1,39 @@
 // src/app/guards/auth.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { AuthService } from '../services/auth.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ShareService } from '../services/share.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private http: HttpClient, private router: Router) { }
+
+
+
+  constructor(private http: HttpClient, private router: Router, private share: ShareService) { }
+
   private excludedUrls: string[] = [
     '/forgot-password',
     '/resetPassword',
     '/verifyEmail',
     '/register',
     '/login',
-    '/logout'
   ]; // Các URL bạn muốn loại bỏ kiểm tra
-  private apiUrl = '/api'; // Replace with your API URL
+
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+
     const currentUrl = state.url;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    // Bỏ qua AuthGuard cho các URL trong danh sách loại trừ
     const isExcluded = this.excludedUrls.some(url => currentUrl.includes(url));
     if (isExcluded) {
       if (currentUrl === '/login') {
-        return this.http.post<string>(this.apiUrl + '/user/check-auth', {}, { withCredentials: true }).pipe(
+        return this.share.checkAuthentication().pipe(
           map((response: any) => {
             if (response.message === 'Successfully') {
               this.router.navigate(['/home']); // Nếu đã đăng nhập, chuyển hướng về trang home
@@ -42,12 +48,11 @@ export class AuthGuard implements CanActivate {
       }
       return of(true);
     }
-
-    return this.http.post<string>(this.apiUrl + '/user/check-auth', {}, { withCredentials: true }).pipe(
+    return this.share.checkAuthentication().pipe(
       map((response: any) => {
         if (response.message === 'Successfully') {
-          // this.router.navigate(['/home']); // Chuyển hướng đến /home nếu đã đăng nhập
           if (currentUrl === '/login') {
+
             this.router.navigate(['/home']);
             return false;
           }

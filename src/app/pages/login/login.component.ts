@@ -1,5 +1,4 @@
 import { Component, } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -8,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { ShareService } from '../../services/share.service';
 
 
 
@@ -32,7 +32,7 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private share: ShareService,
     private router: Router
   ) { }
 
@@ -47,7 +47,7 @@ export class LoginComponent {
   async onLogin() {
     const { employeeCode, password } = this.loginForm.value;
     try {
-      const success = await this.authService.login(employeeCode, password);
+      const success = await this.share.login(employeeCode, password);
       if (success) {
         this.router.navigateByUrl('/home');
       } else {

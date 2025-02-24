@@ -1,5 +1,4 @@
 import { Component, OnInit,inject } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { firstValueFrom } from 'rxjs';
@@ -41,7 +40,6 @@ export class HomeComponent implements OnInit {
   completed: number = 0;
   constructor(
     private share: ShareService,
-    private authService: AuthService
   ) { }
     translateService = inject(AppTranslateService);
   
