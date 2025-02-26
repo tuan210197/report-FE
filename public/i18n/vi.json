@@ -76,6 +76,7 @@
     "Profile":"Thông Tin Cá Nhân",
     "Project":"Dự Án",
     "logout": "Đăng Xuất",
-    "document": "Tài Liệu"
+    "DATE_REPORT":"Ngày báo cáo",
+    "document":"Tài Liệu Dự Án"
 
 }

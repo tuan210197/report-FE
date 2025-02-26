@@ -43,7 +43,7 @@ export class AuthInterceptor implements HttpInterceptor {
         }
 
         // Hiển thị thông báo lỗi lên giao diện bằng SweetAlert2
-        Swal.fire('Infomation', errorMessage, 'error');
+        Swal.fire('System Notification', errorMessage, 'info');
 
         return throwError(() => error);
       })

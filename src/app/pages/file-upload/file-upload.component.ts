@@ -142,7 +142,6 @@ export class FileUploadComponent implements OnInit {
         alert('Lỗi khi tải lên!');
       });
 
-
   }
 
   // Lấy danh sách file từ server

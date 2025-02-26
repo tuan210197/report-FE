@@ -22,7 +22,8 @@ import { AppTranslateService } from '../../services/translate.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-
+import { ActivatedRoute } from '@angular/router';
+import { DataService } from '../../services/data.service';
 
 
 export interface table {
@@ -33,8 +34,8 @@ export interface table {
   projectId: number;
   completed: boolean;
   canceled: boolean;
-  startDate:string;
-  endDate:string;
+  startDate: string;
+  endDate: string;
 }
 
 @Component({
@@ -65,7 +66,7 @@ export interface table {
 })
 export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   tableList: table[] = [];
-  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status','startDate','endDate',  'actions'];
+  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status', 'startDate', 'endDate', 'actions'];
   dataSource = new MatTableDataSource<table>(this.tableList);
   model: any;
   color = '#ADD8E6';
@@ -77,10 +78,16 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   selectedUser: string | null = null;
 
 
+
   private searchSubject = new Subject<string>();
 
   private readonly debounceTimeMs = 500; // Set the debounce time (in milliseconds)
-  constructor(private dialog: MatDialog, private share: ShareService, private fb: FormBuilder) {
+  constructor(private dialog: MatDialog,
+    private share: ShareService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private dataService: DataService
+  ) {
     this.form = this.fb.group({
       startReceiveRequest: [null],
       endReceiveRequest: [null],
@@ -99,22 +106,17 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       startPO: [null],
       endPO: [null],
       user: [null],
-      inputText: ['']
+      inputText: [''],
+      typeSearch: ['']
 
     });
 
-    // this.searchForm = this.fb.group({
-    //   search: ['']
-    // });
   }
   categories: any[] = []; // Mảng lưu danh sách danh mục
   selectedCategory: string | null = null; // Lưu ID danh mục được chọn
 
 
   ngOnInit() {
-    //     this.searchSubject.pipe(debounceTime(this.debounceTimeMs)).subscribe((searchValue) => {
-    //       console.log(searchValue);
-    //  });
 
     this.form.get('inputText')?.valueChanges.pipe(
       debounceTime(this.debounceTimeMs)
@@ -127,11 +129,14 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     }
     );
-
-
-    // this.performSearch(searchValue);
-
-
+    this.dataService.currentData.subscribe((data) => {
+      this.getStaff();
+      if (data) {
+        this.loadProjectChart(data);
+      } else {
+        this.loadProject();
+      }
+    });
   }
   async performSearch(searchValue: string) {
 
@@ -151,8 +156,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         projectId: item.projectId,
         completed: item.completed,
         canceled: item.canceled,
-        startDate:item.startDate,
-        endDate:item.endDate
+        startDate: item.startDate,
+        endDate: item.endDate
       }))
     }
 
@@ -172,8 +177,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.loadProject();
-    this.getStaff();
+
   }
   getStaff() {
     this.share.getAllStaff().subscribe((data: any) => {
@@ -200,6 +204,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async loadProject() {
+
     this.tableList = [];
     const data = await firstValueFrom(this.share.getProject());
     if (Array.isArray(data) && data.length > 0) {
@@ -211,11 +216,97 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         projectId: item.projectId,
         completed: item.completed,
         canceled: item.canceled,
-        startDate:item.startDate,
-        endDate:item.endDate
+        startDate: item.startDate,
+        endDate: item.endDate
       }))
     }
 
+    this.dataSource.data = this.tableList;
+  }
+
+  async loadProjectChart(chart: any) {
+    let total = '';
+    let remain = '#00e272';
+    let completed = '#544fc5';
+    let cancelled = '#fe6a35';
+    if (chart.color === completed) {
+      var val = {
+        completed: true,
+        categoryName: chart.category,
+        cancelled: false
+      }
+      console.log(val)
+    } else if (chart.color === remain) {
+      var val = {
+        completed: false,
+        categoryName: chart.category,
+        cancelled: false
+      }
+      console.log(val)
+    } else if (chart.color === cancelled) {
+      var val = {
+        completed: false,
+        categoryName: chart.category,
+        cancelled: true
+      }
+      console.log(val)
+    }
+    else {
+      if (chart.isCompleted === 'Completed') {
+        var val = {
+          completed: true,
+          categoryName: chart.category,
+          cancelled: false
+        }
+        console.log(val)
+      }
+      else if (chart.isCompleted === 'In Progress') {
+        var val = {
+          completed: false,
+          categoryName: chart.category,
+          cancelled: false
+        }
+        console.log(val)
+
+      } else {
+        var val = {
+          completed: false,
+          categoryName: chart.category,
+          cancelled: true
+        }
+        console.log(val)
+
+      }
+
+    }
+
+
+    this.tableList = [];
+    const data: any = await firstValueFrom(this.share.getProjectChart(val));
+
+    if (Array.isArray(data.data) && data.data.length > 0) {
+      data.data.forEach((item: {
+        projectName: string;
+        category: string;
+        pic: string;
+        description: string;
+        projectId: number;
+        completed: boolean;
+        canceled: boolean;
+        startDate: string;
+        endDate: string;
+      }) => this.tableList.push({
+        projectName: item.projectName,
+        category: item.category,
+        pic: item.pic,
+        description: item.description,
+        projectId: item.projectId,
+        completed: item.completed,
+        canceled: item.canceled,
+        startDate: item.startDate,
+        endDate: item.endDate
+      }));
+    }
     this.dataSource.data = this.tableList;
   }
   getCategory() {

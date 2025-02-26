@@ -1,4 +1,4 @@
-import { Component, ViewChild,Inject } from '@angular/core';
+import { Component, ViewChild,Inject ,inject} from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,10 @@ import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ShareService } from '../../services/share.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AppTranslateService } from '../../services/translate.service';
+import { TranslateModule } from '@ngx-translate/core';
+
+
 export interface table {
   projectName: string;
   implementer: string;
@@ -34,7 +38,7 @@ export interface table {
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule, // Nếu dùng Moment.js thì thay bằng MatMomentDateModule
-    FormsModule, MatSelectModule, ReactiveFormsModule, CommonModule
+    FormsModule, MatSelectModule, ReactiveFormsModule, CommonModule,TranslateModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter },
   { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },],
@@ -65,6 +69,7 @@ export class ImplementComponent {
     });
     console.log(this.data)
   }
+  translateService = inject(AppTranslateService);
 
   async getAll() {
     this.share.getImplementById(this.data).subscribe((data: any) => {

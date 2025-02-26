@@ -10,8 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ShareService {
 
-  // private apiUrl = '/api';
-  private apiUrl = 'http://10.81.160.29:8080/api'
+  private apiUrl = '/api';
+  // private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -52,6 +52,9 @@ export class ShareService {
   /* Start Project*/
   getProject() {
     return this.http.get(this.apiUrl + '/project/get-by-userid', { withCredentials: true });
+  }
+  getProjectChart(data:any) {
+    return this.http.post(this.apiUrl + '/project/search-chart',data, { withCredentials: true });
   }
   getCompletedProject() {
     return this.http.get(this.apiUrl + '/project/get-completed2', { withCredentials: true });

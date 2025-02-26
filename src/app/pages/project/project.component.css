@@ -121,7 +121,7 @@ mat-row:hover, tr:hover {
 }
 
 .mat-column-name2 {
-  width: 250px; /* Cố định độ rộng */
+  width: 350px; /* Cố định độ rộng */
   white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
   overflow: hidden; /* Ẩn phần tràn ra */
   text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
@@ -147,6 +147,12 @@ mat-row:hover, tr:hover {
 }
 .mat-column-name6 {
   width: 100px; /* Cố định độ rộng */
+  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden; /* Ẩn phần tràn ra */
+  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+}
+.mat-column-name7 {
+  width: 150px; /* Cố định độ rộng */
   white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
   overflow: hidden; /* Ẩn phần tràn ra */
   text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
