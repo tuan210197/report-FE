@@ -4,6 +4,9 @@
     height: 100%;
   }
   #container {
-    height: 80vh;
+    height: 75vh;
 }
-
+.year{
+  padding-top: 10px;
+  padding-left: 20px;
+}

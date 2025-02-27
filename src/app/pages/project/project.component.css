@@ -33,10 +33,12 @@ td {
 
 .row {
   text-align: center;
-  padding-left: 30px ;
+  padding-left: 30px;
   padding-right: 30px;
   width: auto;
   height: auto;
+  align-items: center;
+
 }
 
 .icon {
@@ -50,23 +52,33 @@ td {
 
 .button-container {
   display: flex;
-  gap: 12px; /* Khoảng cách giữa các nút */
-  justify-content: flex-start; /* Căn trái */
-  margin-top: 10px; /* Khoảng cách trên */
-  padding: 10px 16px; /* Tăng kích thước button */
+  gap: 12px;
+  /* Khoảng cách giữa các nút */
+  justify-content: flex-start;
+  /* Căn trái */
+  margin-top: 10px;
+  /* Khoảng cách trên */
+  padding: 10px 16px;
+  /* Tăng kích thước button */
+  justify-content: center
+
+
 }
 
 button {
-  min-width: 130px; /* Đảm bảo nút không quá nhỏ */
+  min-width: 130px;
+  /* Đảm bảo nút không quá nhỏ */
   font-size: 16px;
   font-weight: 500;
   display: flex;
-  align-items: center; /* Căn giữa icon và text */
-  justify-content: center; /* Canh giữa */
+  align-items: center;
+  /* Căn giữa icon và text */
+  justify-content: center;
+  /* Canh giữa */
 }
 
 
-.mat-icon{
+.mat-icon {
   margin-right: 10px;
 
 }
@@ -74,11 +86,16 @@ button {
 mat-paginator {
   display: flex;
   justify-content: center;
-  margin: 16px 0; /* Khoảng cách trên và dưới */
+  margin: 16px 0;
+  /* Khoảng cách trên và dưới */
 }
-mat-row:hover, tr:hover {
-  background-color: #d3d3d3; /* Màu nền khi di chuột */
-  transition: background-color 0.3s; /* Hiệu ứng mượt */
+
+mat-row:hover,
+tr:hover {
+  background-color: #d3d3d3;
+  /* Màu nền khi di chuột */
+  transition: background-color 0.3s;
+  /* Hiệu ứng mượt */
 }
 
 
@@ -107,53 +124,101 @@ mat-row:hover, tr:hover {
 .status-btn:hover {
   opacity: 0.8;
 }
+
 .mat-column-name0 {
-  width: 70px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 70px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
+
 .mat-column-name1 {
-  width: 450px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 450px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
 
 .mat-column-name2 {
-  width: 350px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 350px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
 
 .mat-column-name3 {
-  width: 150px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 150px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
+
 .mat-column-name4 {
-  width: 550px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 550px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
+
 .mat-column-name5 {
-  width: 200px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 200px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
+
 .mat-column-name6 {
-  width: 100px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 100px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
 }
+
 .mat-column-name7 {
-  width: 150px; /* Cố định độ rộng */
-  white-space: nowrap; /* Ngăn không cho chữ xuống dòng */
-  overflow: hidden; /* Ẩn phần tràn ra */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." nếu quá dài */
+  width: 150px;
+  /* Cố định độ rộng */
+  white-space: nowrap;
+  /* Ngăn không cho chữ xuống dòng */
+  overflow: hidden;
+  /* Ẩn phần tràn ra */
+  text-overflow: ellipsis;
+  /* Hiển thị dấu "..." nếu quá dài */
+}
+
+.full-width textarea {
+  height: 120px; /* Điều chỉnh chiều cao để hiển thị khoảng 5 dòng */
+  resize: none;  /* Ngăn người dùng thay đổi kích thước thủ công */
+}
+.selected-row {
+  background-color: #ADD8E6  !important; /* Màu xanh dương nhạt */
+  /* color: #264d46 ; */
+  font-weight: bold ;
 }

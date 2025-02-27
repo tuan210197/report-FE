@@ -67,13 +67,11 @@ export class ImplementComponent {
       toppings: [[]],
       description: ['']
     });
-    console.log(this.data)
   }
   translateService = inject(AppTranslateService);
 
   async getAll() {
     this.share.getImplementById(this.data).subscribe((data: any) => {
-      console.log(data)
       if (Array.isArray(data) && data.length > 0) {
         data.forEach(item => this.tableList.push({
           projectName: item.projects.projectName,

@@ -66,7 +66,7 @@ export interface table {
 })
 export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   tableList: table[] = [];
-  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status', 'startDate', 'endDate', 'actions'];
+  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status', 'startDate', 'endDate', 'actions', 'delete'];
   dataSource = new MatTableDataSource<table>(this.tableList);
   model: any;
   color = '#ADD8E6';
@@ -107,7 +107,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       endPO: [null],
       user: [null],
       inputText: [''],
-      typeSearch: ['']
+      typeSearch: [''],
+      implement: ['']
 
     });
 
@@ -132,6 +133,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dataService.currentData.subscribe((data) => {
       this.getStaff();
       if (data) {
+        console.log(data);
         this.loadProjectChart(data);
       } else {
         this.loadProject();
@@ -166,7 +168,11 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   translateService = inject(AppTranslateService);
+  selectedRow: any = null;
 
+  selectRow(row: any) {
+    this.selectedRow = row;
+  }
   switchLanguage() {
     this.translateService.switchLanguage();
   }
@@ -194,6 +200,37 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       data: data,
     });
   }
+  async delete(data: number): Promise<void> {
+    Swal.fire({
+      title: 'Bạn có chắc chắn muốn xóa?',
+      icon: 'warning',
+      showCancelButton: true,
+
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+      customClass: {
+        confirmButton: 'btn btn-success me-2',
+        cancelButton: 'btn btn-danger ms-2',
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        var val = { projectId: data };
+        try {
+          const isDeleted: any = await firstValueFrom(this.share.deleteProject(val));
+  
+          if (isDeleted.code === '200') {
+            Swal.fire('Deleted', isDeleted.message, 'success');
+            this.loadProject();
+          } else {
+            Swal.fire('Delete Fail', isDeleted.message, 'info');
+          }
+        } catch (error) {
+          Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xóa!', 'error');
+        }
+      }
+    });
+  }
+  
 
   openDialog() {
     this.dialog.open(AddProjectComponent, {
@@ -233,21 +270,24 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       var val = {
         completed: true,
         categoryName: chart.category,
-        cancelled: false
+        cancelled: false,
+        year: chart.year
       }
       console.log(val)
     } else if (chart.color === remain) {
       var val = {
         completed: false,
         categoryName: chart.category,
-        cancelled: false
+        cancelled: false,
+        year: chart.year
       }
       console.log(val)
     } else if (chart.color === cancelled) {
       var val = {
         completed: false,
         categoryName: chart.category,
-        cancelled: true
+        cancelled: true,
+        year: chart.year
       }
       console.log(val)
     }
@@ -256,7 +296,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         var val = {
           completed: true,
           categoryName: chart.category,
-          cancelled: false
+          cancelled: false,
+          year: chart.year
         }
         console.log(val)
       }
@@ -264,7 +305,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         var val = {
           completed: false,
           categoryName: chart.category,
-          cancelled: false
+          cancelled: false,
+          year: chart.year
         }
         console.log(val)
 
@@ -272,14 +314,12 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         var val = {
           completed: false,
           categoryName: chart.category,
-          cancelled: true
+          cancelled: true,
+          year: chart.year
         }
         console.log(val)
-
       }
-
     }
-
 
     this.tableList = [];
     const data: any = await firstValueFrom(this.share.getProjectChart(val));
@@ -320,7 +360,10 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
   async getRecord(row: any) {
+
     const dataRow: any = await firstValueFrom(this.share.getProjectById(row.projectId));
+    const dateImplement: any = await firstValueFrom(this.share.getImplementByProjectId(row.projectId));
+    const result = dateImplement.data.join("\n");
     this.form.patchValue(
       {
         startReceiveRequest: dataRow.data.startReceiveRequest,
@@ -340,13 +383,14 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         startPO: dataRow.data.startPO,
         endPO: dataRow.data.endPO,
         user: dataRow.data.pic?.uid.trim(),
+        implement: result
       }
 
 
       // dataRow.data
     );
     this.selectedProjectId = row.projectId;
-
+    this.selectRow(row);
   }
   clearData() {
     this.form.reset();
@@ -375,12 +419,12 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     console.log(val.startDate)
     console.log(val.endDate)
     this.share.updateProject(val).subscribe((data: any) => {
-      console.log(data)
+ 
       if (data.code === '200') {
         Swal.fire('update', 'update success', 'info')
       }
-      this.loadProject();
-      this.clearData();
+      // this.loadProject();
+      // this.clearData();
     })
   }
   async updateStatus(element: any, event: any) {
@@ -411,10 +455,10 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
           }
           console.log(val)
           await firstValueFrom(this.share.updateStatus(val));
-          this.loadProject();
+          // this.loadProject();
         } else {
 
-          this.loadProject();
+          // this.loadProject();
         }
       });
     }

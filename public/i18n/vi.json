@@ -77,6 +77,13 @@
     "Project":"Dự Án",
     "logout": "Đăng Xuất",
     "DATE_REPORT":"Ngày báo cáo",
-    "document":"Tài Liệu Dự Án"
+    "document":"Tài Liệu Dự Án",
+    "implemetList":"Danh Sách Tiến Độ Dự Án",
+    "search":"Tìm kiếm",
+    "isDelete":"Bạn có chắc chắn muốn xóa",
+    "yes":"Xóa",
+    "no":"Hủy",
+    "nocallback":"Hành động này không thể hoàn tác!",
+    "delete":"Xóa"
 
 }

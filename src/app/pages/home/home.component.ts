@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { firstValueFrom } from 'rxjs';
@@ -10,6 +10,26 @@ import { Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 
 
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import { default as _rollupMoment, Moment } from 'moment';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+const moment = _rollupMoment || _moment;
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'YYYY',
+  },
+  display: {
+    dateInput: 'YYYY',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'YYYY',
+  },
+};
 if (!Highcharts.Chart.prototype.addSeriesAsDrilldown) {
   Drilldown(Highcharts);
 }
@@ -27,9 +47,22 @@ interface ChartData {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HighchartsChartModule, TranslateModule],
+  imports: [
+    HighchartsChartModule, TranslateModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  providers: [
+    provideMomentDateAdapter(MY_FORMATS),
+  ],
+  // encapsulation: ViewEncapsulation.None,
+
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
 
@@ -41,28 +74,38 @@ export class HomeComponent implements OnInit {
   remain: number = 0;
   completed: number = 0;
   constructor(
-    private share: ShareService, private router: Router,private dataService : DataService
+    private share: ShareService, private router: Router, private dataService: DataService
   ) { }
   translateService = inject(AppTranslateService);
 
-  switchLanguage() {
-    this.translateService.switchLanguage();
+  readonly date = new FormControl(moment());
+
+  setMonthAndYear(normalizedMonthAndYear: Moment, datepicker: MatDatepicker<Moment>) {
+
+    const ctrlValue = this.date.value!;
+    ctrlValue.year(normalizedMonthAndYear.year());
+    this.date.setValue(ctrlValue); // Lưu năm
+    datepicker.close();
+    this.loadChartData(this.date.value?.year() ?? new Date().getFullYear());
   }
 
   ngOnInit(): void {
-    this.loadChartData();
+    const year = new Date().getFullYear();
+    this.loadChartData(year);
+
   }
 
-  async loadChartData() {
+  async loadChartData(data: number) {
+    let val = data;
 
-    const drilldownData: any = await firstValueFrom(this.share.getCompletedProject());
+    const drilldownData: any = await firstValueFrom(this.share.getCompletedProject(val));
     if (drilldownData && drilldownData.length > 0) {
       this.total = drilldownData[0].total;
       this.news = drilldownData[0].news;
       this.remain = drilldownData[0].remain;
       this.completed = drilldownData[0].completed;
     }
-    this.share.getCharts().subscribe((data: any) => {
+    this.share.getCharts(val).subscribe((data: any) => {
 
       const data2: ChartData[] = data as unknown as ChartData[];
       const total: [string, number, string][] = data2.map(item => [item.categoryName, item.total, item.categoryName + ' total']);
@@ -70,7 +113,7 @@ export class HomeComponent implements OnInit {
       const remaining: [string, number][] = data2.map(item => [item.categoryName, item.remaining]);
       const news: [string, number][] = data2.map(item => [item.categoryName, item.news]);
 
-      console.log(remaining)
+
       const categories = total.map(([category]) => category);
       const totals = total.map(([_, total]) => total);
       const labels = total.map(([_, __, label]) => label);
@@ -129,7 +172,7 @@ export class HomeComponent implements OnInit {
               enabled: true,
               format: '{point.y}'
             },
-       
+
           }
         },
         series: [
@@ -173,7 +216,7 @@ export class HomeComponent implements OnInit {
               type: 'column',
               id: 'total',
               data: data1,
-              
+
 
             },
             {
@@ -185,8 +228,8 @@ export class HomeComponent implements OnInit {
                   click: (event: any) => {
                     const category = event.point.name; // Lấy tên category khi click
                     const color = event.point.color;
-
-                    const data = { category, color };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+                    const data = { category, color,year };
                     this.dataService.changeData(data);
                     this.router.navigate(['/project']);
                   }
@@ -202,8 +245,8 @@ export class HomeComponent implements OnInit {
                   click: (event: any) => {
                     const category = event.point.name; // Lấy tên category khi click
                     const color = event.point.color;
-
-                    const data = { category, color };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+                    const data = { category, color,year };
                     this.dataService.changeData(data);
                     this.router.navigate(['/project']);
                   }
@@ -219,7 +262,8 @@ export class HomeComponent implements OnInit {
                   click: (event: any) => {
                     const category = event.point.name; // Lấy tên category khi click
                     const color = event.point.color;
-                    const data = { category, color };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+                    const data = { category, color,year };
                     this.dataService.changeData(data);
                     this.router.navigate(['/project']);
                   }
@@ -238,13 +282,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[0].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -257,13 +302,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[1].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -276,13 +322,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[2].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -295,13 +342,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[3].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -314,13 +362,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[4].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -333,13 +382,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[5].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -352,13 +402,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[6].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }
@@ -371,13 +422,14 @@ export class HomeComponent implements OnInit {
               point: {
                 events: {
                   click: (event: any) => {
-                    
+
                     const category = data[7].categoryName; // Lấy tên category khi click
                     const color = event.point.color;
                     const isCompleted = event.point.name;
-                    const data2 = { category, color, isCompleted };
+                    const year = this.date.value?.year() ?? new Date().getFullYear()
+           
+                    const data2 = { category, color, isCompleted,year };                    
                     this.dataService.changeData(data2);
-                    console.log(data2);
                     this.router.navigate(['/project']);
                   }
                 }

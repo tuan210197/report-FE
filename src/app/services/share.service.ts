@@ -10,8 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ShareService {
 
-  private apiUrl = '/api';
-  // private apiUrl = 'http://10.81.160.29:8080/api'
+  // private apiUrl = '/api';
+  private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -46,18 +46,18 @@ export class ShareService {
     // Kiểm tra sự tồn tại của cookie với tên 'token'
     return this.http.post(this.apiUrl + '/user/check-auth', {}, { withCredentials: true });
   }
-  getCharts(): Observable<Object> {
-    return this.http.get(this.apiUrl + "/project/dashboard", { withCredentials: true });
+  getCharts(data: number) {
+    return this.http.post(this.apiUrl + "/project/dashboard", data, { withCredentials: true });
   }
   /* Start Project*/
   getProject() {
     return this.http.get(this.apiUrl + '/project/get-by-userid', { withCredentials: true });
   }
-  getProjectChart(data:any) {
-    return this.http.post(this.apiUrl + '/project/search-chart',data, { withCredentials: true });
+  getProjectChart(data: any) {
+    return this.http.post(this.apiUrl + '/project/search-chart', data, { withCredentials: true });
   }
-  getCompletedProject() {
-    return this.http.get(this.apiUrl + '/project/get-completed2', { withCredentials: true });
+  getCompletedProject(data: number) {
+    return this.http.post(this.apiUrl + '/project/get-completed2', data, { withCredentials: true });
   }
   getProjectName() {
     return this.http.get(this.apiUrl + '/project/get-project-name', { withCredentials: true });
@@ -79,6 +79,7 @@ export class ShareService {
   getProjectById(id: number) {
     return this.http.get(this.apiUrl + '/project/' + id, { withCredentials: true });
   }
+
   updateProject(data: any) {
     return this.http.post(this.apiUrl + '/project/update', data, { withCredentials: true });
   }
@@ -91,6 +92,10 @@ export class ShareService {
   }
   searchByName(data: any) {
     return this.http.post(this.apiUrl + '/project/search-by-name', data, { withCredentials: true });
+  }
+
+  deleteProject(data: any) {
+    return this.http.post(this.apiUrl + '/project/delete', data, { withCredentials: true });
   }
   /* End Project*/
 
@@ -128,7 +133,6 @@ export class ShareService {
     return this.http.get(this.apiUrl + '/daily-report/get-max-export-date', { withCredentials: true });
   }
   /*end daily report */
-
   /*implement */
 
   getAllImplement() {
@@ -136,6 +140,9 @@ export class ShareService {
   }
   getImplementById(id: number) {
     return this.http.get(this.apiUrl + '/implement/get/' + id, { withCredentials: true });
+  }
+  getImplementByProjectId(data: any) {
+    return this.http.post(this.apiUrl + '/implement/get-implement-by-project', data, { withCredentials: true });
   }
 
   /**Start user */

@@ -76,6 +76,13 @@
     "Profile": "個人資料",
     "Project": "項目",
     "logout": "登出",
-    "DATE_REPORT":"每日报告",
-     "document":"项目文件"
-  }
+    "DATE_REPORT": "每日报告",
+    "document": "项目文件",
+    "implemetList": "项目进展清单",
+    "search": "搜索",
+    "isDelete":"您确定要删除吗",
+    "yes":"Có",
+    "no":"Không",
+    "nocallback":"Hành động này không thể hoàn tác!",
+    "delete":"删除"
+}

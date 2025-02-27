@@ -1,11 +1,21 @@
 <!-- <div class="card-header card-header-danger"> -->
+<div class="year">
+  <mat-form-field class="col-md-2">
+    <mat-label>Month and Year</mat-label>
+    <input matInput [matDatepicker]="dp" [formControl]="date">
+    <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+    <mat-datepicker #dp startView="multi-year" (yearSelected)="setMonthAndYear($event, dp)"
+      panelClass="example-month-picker">
+    </mat-datepicker>
+  </mat-form-field>
+</div>
 
-  <div class="container-fluid">
-    <h2 class="title">
-{{'control' | translate}}
-    </h2>
-    <div id="container">
-    </div>
-
+<div class="container-fluid">
+  <h2 class="title">
+    {{'control' | translate}}
+  </h2>
+  <div id="container">
   </div>
+
+</div>
 <!-- </div> -->
