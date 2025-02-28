@@ -181,7 +181,7 @@ tr:hover {
 }
 
 .mat-column-name5 {
-  width: 200px;
+  width: 00px;
   /* Cố định độ rộng */
   white-space: nowrap;
   /* Ngăn không cho chữ xuống dòng */
@@ -214,11 +214,14 @@ tr:hover {
 }
 
 .full-width textarea {
-  height: 120px; /* Điều chỉnh chiều cao để hiển thị khoảng 5 dòng */
+  height: 100px; /* Điều chỉnh chiều cao để hiển thị khoảng 5 dòng */
   resize: none;  /* Ngăn người dùng thay đổi kích thước thủ công */
 }
 .selected-row {
   background-color: #ADD8E6  !important; /* Màu xanh dương nhạt */
   /* color: #264d46 ; */
-  font-weight: bold ;
+  /* font-weight: bold ; */
+}
+th.mat-sort-header-sorted {
+  color: black;
 }

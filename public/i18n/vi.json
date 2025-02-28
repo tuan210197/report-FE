@@ -84,6 +84,9 @@
     "yes":"Xóa",
     "no":"Hủy",
     "nocallback":"Hành động này không thể hoàn tác!",
-    "delete":"Xóa"
+    "delete":"Xóa",
+    "filterName":"Lọc Theo Tên",
+    "filterStatus":"Lọc Theo Trạng Thái",
+    "filterCategory":"Lọc Theo Loại Hình Dự Án"
 
 }

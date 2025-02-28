@@ -24,6 +24,8 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../../services/data.service';
+import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 
 export interface table {
@@ -55,7 +57,8 @@ export interface table {
     CommonModule,
     TranslateModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSortModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter },
   { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },],
@@ -76,8 +79,13 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   // searchForm: FormGroup;
   users: any[] = [];
   selectedUser: string | null = null;
+  private _liveAnnouncer = inject(LiveAnnouncer);
+  selectedName: string | null = null;
+  selectedCategory: string | null = null;
+  selectedCompleted: string | null = null;
 
-
+  uniqueNames: string[] = [];
+  uniqueCategories: string[] = [];
 
   private searchSubject = new Subject<string>();
 
@@ -108,13 +116,14 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       user: [null],
       inputText: [''],
       typeSearch: [''],
-      implement: ['']
+      implement: [''],
+      userFilter: [''],
 
     });
 
   }
   categories: any[] = []; // Mảng lưu danh sách danh mục
-  selectedCategory: string | null = null; // Lưu ID danh mục được chọn
+
 
 
   ngOnInit() {
@@ -131,11 +140,13 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     );
     this.dataService.currentData.subscribe((data) => {
-      this.getStaff();
       if (data) {
-        console.log(data);
+        this.getCategory();
+        this.getStaff();
         this.loadProjectChart(data);
       } else {
+      this.getCategory();
+      this.getStaff();
         this.loadProject();
       }
     });
@@ -173,21 +184,51 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   selectRow(row: any) {
     this.selectedRow = row;
   }
-  switchLanguage() {
-    this.translateService.switchLanguage();
-  }
 
   ngOnDestroy() {
     this.searchSubject.complete();
   }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
 
+    this.dataSource.sortingDataAccessor = (item:any, property) => {
+      switch (property) {
+        case 'pic': return item.pic.fullName.toLowerCase(); // Sắp xếp theo fullName của pic
+        case 'category': return item.category.categoryName.toLowerCase(); // Sắp xếp theo fullName của pic
+        case 'status': return this.getStatusText(item).toLowerCase(); // Sắp xếp theo trạng thái hiển thị
+        default: return item[property]; // Các trường khác xử lý mặc định
+      }
+    };
   }
+  applyFilter() {
+   
+    this.loadProject();
+
+    console.log(this.selectedName, this.selectedCategory, this.selectedCompleted);
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const matchesName = this.selectedName ? data.pic.fullName === this.selectedName : true;
+      const matchesCategory = this.selectedCategory ? data.category.categoryName === this.selectedCategory : true;
+      const matchesCompleted = this.selectedCompleted !== null ? data.completed.toString() === this.selectedCompleted : true;
+      return matchesName && matchesCategory && matchesCompleted;
+    };
+
+    this.dataSource.filter = Math.random().toString(); // Cần cập nhật để Angular nhận diện filter thay đổi
+  }
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
+  }
+
   getStaff() {
     this.share.getAllStaff().subscribe((data: any) => {
       this.users = data;
+      this.uniqueNames = data.map((item: any) => item.fullName);
     }, (error) => {
       console.error('lỗi khi load staff', error);
     })
@@ -209,15 +250,16 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       confirmButtonText: 'Xóa',
       cancelButtonText: 'Hủy',
       customClass: {
-        confirmButton: 'btn btn-success me-2',
-        cancelButton: 'btn btn-danger ms-2',
+        confirmButton: 'btn btn-danger me-2',
+        cancelButton: 'btn btn-success ms-2',
       }
     }).then(async (result) => {
       if (result.isConfirmed) {
         var val = { projectId: data };
+        console.log(val)
         try {
           const isDeleted: any = await firstValueFrom(this.share.deleteProject(val));
-  
+
           if (isDeleted.code === '200') {
             Swal.fire('Deleted', isDeleted.message, 'success');
             this.loadProject();
@@ -230,7 +272,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     });
   }
-  
+
 
   openDialog() {
     this.dialog.open(AddProjectComponent, {
@@ -352,6 +394,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories
+      this.uniqueCategories = data.map((item: any) => item.categoryName);
       console.log(data);
     },
       (error) => {
@@ -394,6 +437,9 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   clearData() {
     this.form.reset();
+    this.selectedCategory = null;
+    this.selectedName = null;
+    this.selectedCompleted = null;
   }
   update() {
     var val = {
@@ -419,7 +465,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     console.log(val.startDate)
     console.log(val.endDate)
     this.share.updateProject(val).subscribe((data: any) => {
- 
+
       if (data.code === '200') {
         Swal.fire('update', 'update success', 'info')
       }
