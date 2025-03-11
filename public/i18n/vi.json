@@ -87,6 +87,11 @@
     "delete":"Xóa",
     "filterName":"Lọc Theo Tên",
     "filterStatus":"Lọc Theo Trạng Thái",
-    "filterCategory":"Lọc Theo Loại Hình Dự Án"
+    "filterCategory":"Lọc Theo Loại Hình Dự Án",
+    "from":"Từ Năm",
+    "to":"Đến Năm",
+    "fileName":"Tên Tài Liệu",
+    "dateUpload":"Ngày Tải Lên",
+    "download":"Tải Xuống"
 
 }

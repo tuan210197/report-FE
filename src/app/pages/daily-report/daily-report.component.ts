@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -10,7 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; // Hoặc MatMomentDateModule nếu dùng Moment.js
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ShareService } from '../../services/share.service';
 import { firstValueFrom } from 'rxjs';
@@ -20,6 +20,7 @@ import { saveAs } from 'file-saver';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppTranslateService } from '../../services/translate.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 interface dataTable {
   user: string;
@@ -55,39 +56,36 @@ interface dataTable {
   templateUrl: './daily-report.component.html',
   styleUrl: './daily-report.component.css'
 })
-export class DailyReportComponent {
+// 'userName','progress',, 'create_at'
+export class DailyReportComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'position', 'userName', 'requester',
-    'projectName', 'categoryName', 'address', 'progress',
+    'position', 'requester',
+    'projectName', 'categoryName', 'address',
     'quantityCompleted', 'quantityRemain', 'contractor',
-    'quantity', 'numberWorker', 'create_at'];
+    'quantity', 'numberWorker'];
   dataSource = new MatTableDataSource<dataTable>([]);
   model: any;
   color = '#ADD8E6';
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  ngAfterViewInit() {
-    this.getProjectName();
-    // this.getProjectByUserId();
-    this.getCategory();
-    this.getAllDailyReport();
-    this.dataSource.paginator = this.paginator;
-  }
   translateService = inject(AppTranslateService);
-
-
   categories: any[] = []; // Mảng lưu danh sách danh mục
   selectedCategory: string | null = null; // Lưu ID danh mục được chọn
   selectedProject: string | null = null; // Lưu ID dự án được chọn
   projects: any[] = []; // Mảng lưu danh sách dự án
   listData: dataTable[] = [];
+  selectedProjectSearch: any = null; // Biến để lưu object được chọn
+
   form: FormGroup;
+  formGroup = new FormGroup({
+    projectId: new FormControl('') // Lưu projectId vào FormGroup
+  });
+  searchControl = new FormControl(''); // Dùng để nhập và tìm kiếm
+  projectsSearch: any[] = []; // Danh sách kết quả từ API
   constructor(private fb: FormBuilder, private dialog: MatDialog, private share: ShareService) {
     this.form = this.fb.group({
       requester: ['', Validators.required], // Bắt buộc nhập
       address: ['', Validators.required], // Bắt buộc nhập
       projectId: ['', [Validators.required]], // Bắt buộc nhập
-      progress: ['', [Validators.required, Validators.min(1), Validators.max(100)]], // Bắt buộc ngày bắt đầu
+      // progress: ['', [Validators.required, Validators.min(1), Validators.max(100)]], // Bắt buộc ngày bắt đầu
       quantity: ['', [Validators.required, Validators.min(1)]], // Phải lớn hơn 0
       categoryId: ['', Validators.required], // Bắt buộc chọn
       quantityCompleted: ['', [Validators.required, Validators.min(0)]], // Bắt buộc nhập
@@ -98,10 +96,40 @@ export class DailyReportComponent {
       endDate: [''],
       implement: ['', [Validators.required]],
       exportDate: [''],
-      
+
     });
-    
+
   }
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  ngAfterViewInit() {
+    this.getProjectByUserId();
+    this.getCategory();
+    this.getAllDailyReport();
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnInit(): void {
+    this.getProjectName(); // Gọi khi load trang để lấy toàn bộ dự án
+
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300), // Đợi 500ms sau khi nhập để tránh gọi API quá nhiều lần
+        switchMap(value => {
+          if (!value || value.toString().trim() === '') {
+            this.getProjectName(); // Nếu nhập rỗng, load lại toàn bộ
+            return []; // Không gọi searchProjects
+          }
+          return this.searchProjects(value); // Gọi API tìm kiếm
+        })
+      )
+      .subscribe((data: any) => {
+        this.projectsSearch = data?.data ?? [];
+      });
+  }
+
+
+
+
   checkFormErrors(formGroup: FormGroup): boolean {
     let isValid = true;
     Object.keys(formGroup.controls).forEach((key) => {
@@ -124,17 +152,22 @@ export class DailyReportComponent {
 
   getProjectName() {
     this.share.getProjectName().subscribe((data: any) => {
-      this.projects = data; // Gán dữ liệu vào mảng projects
+      this.projectsSearch = data; // Gán dữ liệu vào mảng projects
     }, (error) => {
-      // console.error('Lỗi khi tải dự án:', error);
+      console.error('Lỗi khi tải dự án:', error);
     });
   }
 
   getProjectByUserId() {
-    this.share.getProjectByUserId().subscribe((data: any) => {
+    // this.share.getProjectByUserId().subscribe((data: any) => {
+    //   this.projects = data; // Gán dữ liệu vào mảng projects
+    // }, (error) => {
+    //   // console.error('Lỗi khi tải dự án:', error);
+    // });
+    this.share.getProjectName().subscribe((data: any) => {
       this.projects = data; // Gán dữ liệu vào mảng projects
     }, (error) => {
-      // console.error('Lỗi khi tải dự án:', error);
+      console.error('Lỗi khi tải dự án:', error);
     });
   }
   getCategory() {
@@ -151,7 +184,7 @@ export class DailyReportComponent {
   async getAllDailyReport() {
     this.listData = []
     const list = await firstValueFrom(this.share.getDailyReport()) as dataTable[];
-
+    console.log(list);
     list.forEach((item: dataTable) => this.listData.push({
       user: item.user,
       requester: item.requester,
@@ -175,7 +208,7 @@ export class DailyReportComponent {
         requester: this.form.value.requester,
         address: this.form.value.address,
         projectId: this.form.value.projectId,
-        progress: this.form.value.progress,
+        // progress: this.form.value.progress,
         quantity: this.form.value.quantity,
         categoryId: this.form.value.categoryId,
         quantityCompleted: this.form.value.quantityCompleted,
@@ -244,15 +277,14 @@ export class DailyReportComponent {
       return null;
     }
   }
-  async setlectionChange(event: any) {
-    // this.selectedCategory = event.value;
+  async selectionChangeCategory(event: any) {
+
     var val = {
       projectId: event.value
     }
     const report: any = await firstValueFrom(this.share.getDailyReportByProjecetId(val));
 
     if (report.data !== null && 'reportId' in report.data) {
-      console.log("oke")
       this.form.patchValue(
         {
           requester: report.data.requester, // Bắt buộc nhập
@@ -272,7 +304,6 @@ export class DailyReportComponent {
       );
     }
     if (report.data !== null && 'projectId' in report.data) {
-      console.log(report.data)
       this.form.patchValue(
         {
           projectId: report.data.projectId, // Bắt buộc nhập
@@ -293,7 +324,18 @@ export class DailyReportComponent {
       );
     }
   }
-
+  selectionChange(event: any) {
+    this.selectedProjectSearch = this.projectsSearch.find(p => p.projectId === event.option.value);
+    if (this.selectedProjectSearch) {
+      this.formGroup.controls['projectId'].setValue(this.selectedProjectSearch.projectId); // Lưu projectId
+      this.searchControl.setValue(this.selectedProjectSearch.projectName, { emitEvent: false }); // Hiển thị projectName
+    }
+    this.selectionChangeCategory(event.option);
+  }
+  searchProjects(query: string) {
+    var data = { projectName: query };
+    return this.share.searchByName(data);
+  }
   async exportToExcel() {
     var val = {
       date: this.convertToCustomFormatDate(this.form.value.exportDate)
@@ -318,31 +360,31 @@ export class DailyReportComponent {
   private generateExcel(data: any[]) {
 
     const customHeaders = [
-      ['STT/序号', 'Ngày báo cáo/报告日期', 'Người báo cáo/报告人', 'Bên Yêu Cầu/需求用户', 'Tên Dự án/项目名称',
-        'Loại Dự Án/项目类型', 'Địa Điểm Làm Việc/工作地点', 'Nhà thầu/供应商', 'Số Công Nhân/人工数量',
-        'Tiến Độ (%) /进度(%)', 'Số Lượng/数量', 'Số Lượng Hoàn Thành/已完成', 'Số Lượng Chưa Hoàn Thành/未完成',
-        'Ngày Bắt Đầu/开始日期', 'Ngày Dự Kiến Kết Thúc/结束日期', 'Báo Cáo Công Việc Hàng Ngày/每日工作报告'
+      ['序号', '需求用户', '项目名称',
+        '项目类型', '工作地点', '已完成', '未完成', '供应商',
+        '数量', '人工数量',
+        '结束日期', '每日工作报告','负责人'
       ]
     ];
     // 2️⃣ Chuyển đổi dữ liệu thành định dạng mảng theo đúng thứ tự cột
 
     const exportData = data.map((item, index) => [
       index + 1,
-      this.convertToCustomFormatDate(item.createAt),  // Chuyển đổi format ngày
-      item.fullName,
       item.requester,
       item.projectName,
       item.categoryName,
       item.address,
-      item.contractor,
-      item.numberWorker,
-      item.progress,
-      item.quantity,
       item.quantityCompleted,
       item.quantityRemain,
-      this.convertToCustomFormatDate(item.startDate),
+      item.contractor,
+      item.quantity,
+      item.numberWorker,
+      // this.convertToCustomFormatDate(item.createAt),  // Chuyển đổi format ngày
+      // item.progress,
+      // this.convertToCustomFormatDate(item.startDate),
       this.convertToCustomFormatDate(item.endDate),
       item.implement,
+      item.fullName,
 
 
     ]);
@@ -352,20 +394,18 @@ export class DailyReportComponent {
     worksheet['!cols'] = [
       { wch: 10 },   // STT
       { wch: 30 },  // Ngày báo cáo
-      { wch: 40 },  // Ngày báo cáo
+      { wch: 20 },  // Ngày báo cáo
       { wch: 30 },  // Người báo cáo
-      { wch: 60 },  // Dự án
-      { wch: 70 },  // Loại công việc
-      { wch: 40 },  // Địa chỉ
+      { wch: 30 },  // Dự án
+      { wch: 30 },  // Loại công việc
+      { wch: 30 },  // Địa chỉ
       { wch: 30 },  // Nhà thầu
       { wch: 30 },  // Số công nhân
       { wch: 30 },  // Tiến độ
       { wch: 25 },  // Số lượng
       { wch: 25 },  // Hoàn thành
-      { wch: 25 },  // Còn lại
-      { wch: 40 },  // Ngày bắt đầu
-      { wch: 40 },  // Ngày kết thúc
-      { wch: 100 }   // Thực thi dự án
+      { wch: 25 },  // Hoàn thành
+
     ];
 
     // 5️⃣ Xuất file Excel
@@ -374,11 +414,8 @@ export class DailyReportComponent {
     const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
 
     if (this.form.value.exportDate === '' || this.form.value.exportDate === null) {
-      console.log(data[0].createAt)
-      console.log(this.form.value.exportDate)
       saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(data[0].createAt) + '.xlsx');
     } else {
-      console.log(this.form.value.exportDate)
       saveAs(dataBlob, 'Daily_Report_' + this.convertToCustomFormatDate(this.form.value.exportDate) + '.xlsx');
 
     }

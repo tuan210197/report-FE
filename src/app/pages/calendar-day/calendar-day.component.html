@@ -1,0 +1,8 @@
+<mat-form-field appearance="outline" class="full-width">
+    <mat-select [value]="selectedUser" (selectionChange)="onUserSelect($event.value)">
+      <mat-option *ngFor="let user of users" [value]="user.uid">
+        {{ user.fullName }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  

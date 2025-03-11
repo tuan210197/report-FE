@@ -140,14 +140,31 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     );
     this.dataService.currentData.subscribe((data) => {
-      if (data) {
-        this.getCategory();
-        this.getStaff();
-        this.loadProjectChart(data);
-      } else {
-      this.getCategory();
+      // if ('year' in data) {
+      //   if (data) {
+      //     this.getCategory();
+      //     this.getStaff();
+      //     this.loadProjectChart(data);
+      //   } else {
+      //     this.getCategory();
+      //     this.getStaff();
+      //     this.loadProject();
+      //   }
+      // } else {
       this.getStaff();
+      if (data === null) {
+        this.getCategory();
         this.loadProject();
+      } else {
+        if ('from' in data) {
+          debugger;
+          this.getCategory();
+          this.loadProjectChartFromTo(data);
+        } else {
+          debugger;
+          this.getCategory();
+          this.loadProjectChart(data);
+        }
       }
     });
   }
@@ -194,7 +211,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    this.dataSource.sortingDataAccessor = (item:any, property) => {
+    this.dataSource.sortingDataAccessor = (item: any, property) => {
       switch (property) {
         case 'pic': return item.pic.fullName.toLowerCase(); // Sắp xếp theo fullName của pic
         case 'category': return item.category.categoryName.toLowerCase(); // Sắp xếp theo fullName của pic
@@ -204,14 +221,15 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     };
   }
   applyFilter() {
-   
+
     this.loadProject();
 
-    console.log(this.selectedName, this.selectedCategory, this.selectedCompleted);
     this.dataSource.filterPredicate = (data: any, filter: string) => {
+      console.log(data.completed.toString());
       const matchesName = this.selectedName ? data.pic.fullName === this.selectedName : true;
       const matchesCategory = this.selectedCategory ? data.category.categoryName === this.selectedCategory : true;
-      const matchesCompleted = this.selectedCompleted !== null ? data.completed.toString() === this.selectedCompleted : true;
+      const matchesCompleted = this.selectedCompleted === null || this.selectedCompleted === '' ? true : this.getStatusText(data) === this.selectedCompleted;
+
       return matchesName && matchesCategory && matchesCompleted;
     };
 
@@ -304,6 +322,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async loadProjectChart(chart: any) {
+    console.log(chart)
     let total = '';
     let remain = '#00e272';
     let completed = '#544fc5';
@@ -313,25 +332,22 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         completed: true,
         categoryName: chart.category,
         cancelled: false,
-        year: chart.year
       }
-      console.log(val)
+
     } else if (chart.color === remain) {
       var val = {
         completed: false,
         categoryName: chart.category,
         cancelled: false,
-        year: chart.year
       }
-      console.log(val)
+
     } else if (chart.color === cancelled) {
       var val = {
         completed: false,
         categoryName: chart.category,
         cancelled: true,
-        year: chart.year
       }
-      console.log(val)
+
     }
     else {
       if (chart.isCompleted === 'Completed') {
@@ -339,27 +355,24 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
           completed: true,
           categoryName: chart.category,
           cancelled: false,
-          year: chart.year
         }
-        console.log(val)
+
       }
       else if (chart.isCompleted === 'In Progress') {
         var val = {
           completed: false,
           categoryName: chart.category,
           cancelled: false,
-          year: chart.year
         }
-        console.log(val)
+
 
       } else {
         var val = {
           completed: false,
           categoryName: chart.category,
           cancelled: true,
-          year: chart.year
         }
-        console.log(val)
+
       }
     }
 
@@ -391,11 +404,107 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.dataSource.data = this.tableList;
   }
+  async loadProjectChartFromTo(chart: any) {
+    console.log(chart)
+
+    debugger;
+    let total = '';
+    let remain = '#00e272';
+    let completed = '#544fc5';
+    let cancelled = '#fe6a35';
+    if (chart.color === completed) {
+      var val = {
+        completed: true,
+        categoryName: chart.category,
+        cancelled: false,
+        from: chart.from,
+        to: chart.to
+      }
+
+    } else if (chart.color === remain) {
+      var val = {
+        completed: false,
+        categoryName: chart.category,
+        cancelled: false,
+        from: chart.from,
+        to: chart.to
+      }
+
+    } else if (chart.color === cancelled) {
+      var val = {
+        completed: false,
+        categoryName: chart.category,
+        cancelled: true,
+        from: chart.from,
+        to: chart.to
+      }
+
+    }
+    else {
+      if (chart.isCompleted === 'Completed') {
+        var val = {
+          completed: true,
+          categoryName: chart.category,
+          cancelled: false,
+          from: chart.from,
+          to: chart.to
+        }
+
+      }
+      else if (chart.isCompleted === 'In Progress') {
+        var val = {
+          completed: false,
+          categoryName: chart.category,
+          cancelled: false,
+          from: chart.from,
+          to: chart.to
+        }
+
+
+      } else {
+        var val = {
+          completed: false,
+          categoryName: chart.category,
+          cancelled: true,
+          from: chart.from,
+          to: chart.to
+        }
+
+      }
+    }
+
+    this.tableList = [];
+    const data: any = await firstValueFrom(this.share.getProjectChartFromTo(val));
+
+    if (Array.isArray(data.data) && data.data.length > 0) {
+      data.data.forEach((item: {
+        projectName: string;
+        category: string;
+        pic: string;
+        description: string;
+        projectId: number;
+        completed: boolean;
+        canceled: boolean;
+        startDate: string;
+        endDate: string;
+      }) => this.tableList.push({
+        projectName: item.projectName,
+        category: item.category,
+        pic: item.pic,
+        description: item.description,
+        projectId: item.projectId,
+        completed: item.completed,
+        canceled: item.canceled,
+        startDate: item.startDate,
+        endDate: item.endDate
+      }));
+    }
+    this.dataSource.data = this.tableList;
+  }
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories
       this.uniqueCategories = data.map((item: any) => item.categoryName);
-      console.log(data);
     },
       (error) => {
         console.error('Lỗi khi tải danh mục:', error);

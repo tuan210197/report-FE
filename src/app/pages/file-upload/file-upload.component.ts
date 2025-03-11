@@ -58,6 +58,7 @@ export class FileUploadComponent implements OnInit {
   selectedFile: File | null = null;
   tableList: table[] = [];
   selectedProject: any = null; // Biến để lưu object được chọn
+  projectsSearch: any[] = []; // Danh sách kết quả từ API
 
 
   displayedColumns: string[] = ['position', 'projectName', 'fileName', 'uploadAt', 'actions'];
@@ -72,15 +73,21 @@ export class FileUploadComponent implements OnInit {
 
   }
   ngOnInit(): void {
+    this.getProjectName(); // Gọi khi load trang để lấy toàn bộ dự án
     this.searchControl.valueChanges
       .pipe(
-        debounceTime(500), // Đợi 300ms sau khi nhập để tránh gọi API quá nhiều lần
-        switchMap(value => value ? this.searchProjects(value) : []) // Gọi API
+        debounceTime(300), // Đợi 500ms sau khi nhập để tránh gọi API quá nhiều lần
+        switchMap(value => {
+          if (!value || value.trim() === '') {
+            this.getProjectName(); // Nếu nhập rỗng, load lại toàn bộ
+            return []; // Không gọi searchProjects
+          }
+          return this.searchProjects(value); // Gọi API tìm kiếm
+        })
       )
       .subscribe((data: any) => {
-        this.projects = data.data as any[];
+        this.projectsSearch = data?.data ?? [];
       });
-
   }
 
   constructor(private fb: FormBuilder, private dialog: MatDialog, private share: ShareService,private http: HttpClient) {
@@ -90,7 +97,7 @@ export class FileUploadComponent implements OnInit {
     projectId: new FormControl('') // Lưu projectId vào FormGroup
   });
   searchControl = new FormControl(''); // Dùng để nhập và tìm kiếm
-  projects: any[] = []; // Danh sách kết quả từ API
+  // projects: any[] = []; // Danh sách kết quả từ API
 
 
   searchProjects(query: string) {
@@ -99,13 +106,21 @@ export class FileUploadComponent implements OnInit {
   }
   selectionChange(event: any) {
     // const selectedProject = this.projects.find(p => p.projectId === event.option.value);
-    this.selectedProject = this.projects.find(p => p.projectId === event.option.value);
+    this.selectedProject = this.projectsSearch.find(p => p.projectId === event.option.value);
 
     if (this.selectedProject) {
       this.formGroup.controls['projectId'].setValue(this.selectedProject.projectId); // Lưu projectId
       this.searchControl.setValue(this.selectedProject.projectName, { emitEvent: false }); // Hiển thị projectName
     }
   }
+  getProjectName() {
+    this.share.getProjectName().subscribe((data: any) => {
+      this.projectsSearch = data; // Gán dữ liệu vào mảng projects
+    }, (error) => {
+      // console.error('Lỗi khi tải dự án:', error);
+    });
+  }
+
   // Khi người dùng chọn file
   onFileSelected(event: any): void {
     this.selectedFile = event.target.files[0];

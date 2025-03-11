@@ -1,21 +1,27 @@
-<!-- <div class="card-header card-header-danger"> -->
-<div class="year">
-  <mat-form-field class="col-md-2">
-    <mat-label>Month and Year</mat-label>
-    <input matInput [matDatepicker]="dp" [formControl]="date">
-    <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-    <mat-datepicker #dp startView="multi-year" (yearSelected)="setMonthAndYear($event, dp)"
-      panelClass="example-month-picker">
-    </mat-datepicker>
-  </mat-form-field>
-</div>
-
-<div class="container-fluid">
   <h2 class="title">
     {{'control' | translate}}
   </h2>
+  <br>
+<div class="year">
+    <mat-form-field appearance="outline" class="col-md-2">
+      <mat-label>{{'from'|translate}}</mat-label>
+      <input matInput [matDatepicker]="fromPicker" [formControl]="fromYear">
+      <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromPicker startView="multi-year" (yearSelected)="setFromYear($event, fromPicker)" panelClass="year-picker">
+      </mat-datepicker>
+    </mat-form-field>
+  
+    <mat-form-field appearance="outline" class="col-md-2">
+      <mat-label>{{'to'| translate}}</mat-label>
+      <input matInput [matDatepicker]="toPicker"  [formControl]="toYear" >
+      <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+      <mat-datepicker #toPicker startView="multi-year" (yearSelected)="setToYear($event, toPicker)"></mat-datepicker>
+    </mat-form-field>
+  <button type="button" class="btn btn-primary" (click)="searchFromTo()"> <mat-icon>search</mat-icon></button>
+</div>
+<div class="container-fluid">
+
   <div id="container">
   </div>
 
 </div>
-<!-- </div> -->

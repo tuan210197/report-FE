@@ -4,9 +4,27 @@
     height: 100%;
   }
   #container {
-    height: 75vh;
+    height: 70vh;
 }
-.year{
-  padding-top: 10px;
-  padding-left: 20px;
+.year {
+  display: flex;
+  justify-content: flex-end; /* Đưa toàn bộ nội dung sang phải */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  padding-right: 20px; /* Khoảng cách từ phần tử cuối cùng đến mép phải */
 }
+
+.year mat-form-field {
+  width: 250px; /* Độ rộng cố định cho các input */
+}
+
+.btn-primary {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.title{
+  text-align: center;
+}
+

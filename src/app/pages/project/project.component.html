@@ -147,9 +147,6 @@
       </div>
     </div>
 
-
-
-
     <div class="row">
       <div class="col-md-3 ">
         <mat-form-field class="full-width">
@@ -191,7 +188,7 @@
 
     </div>
 
-    <div class="col-md-2 ">
+    <div class="col-md-3 ">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{'filterCategory'|translate }}</mat-label>
         <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilter()">
@@ -208,8 +205,9 @@
         <mat-label>{{'filterStatus'|translate}}</mat-label>
         <mat-select [(ngModel)]="selectedCompleted" (selectionChange)="applyFilter()">
           <mat-option [value]="null">ALL</mat-option>
-          <mat-option value="true">Hoàn thành</mat-option>
-          <mat-option value="false">Chưa hoàn thành</mat-option>
+          <mat-option value="Completed">Completed</mat-option>
+          <mat-option value="In Progress">In Progress</mat-option>
+          <mat-option value="Cancelled">Cancelled</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

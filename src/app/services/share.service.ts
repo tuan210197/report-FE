@@ -10,8 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ShareService {
 
-  // private apiUrl = '/api';
-  private apiUrl = 'http://10.81.160.29:8080/api'
+  private apiUrl = '/api';
+  // private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -46,8 +46,12 @@ export class ShareService {
     // Kiểm tra sự tồn tại của cookie với tên 'token'
     return this.http.post(this.apiUrl + '/user/check-auth', {}, { withCredentials: true });
   }
-  getCharts(data: number) {
-    return this.http.post(this.apiUrl + "/project/dashboard", data, { withCredentials: true });
+  getCharts() {
+    return this.http.get(this.apiUrl + "/project/dashboard", { withCredentials: true });
+  }
+
+  getChartFromTo(data: any) {
+    return this.http.post(this.apiUrl + "/project/dashboard-from-to", data, { withCredentials: true });
   }
   /* Start Project*/
   getProject() {
@@ -56,13 +60,19 @@ export class ShareService {
   getProjectChart(data: any) {
     return this.http.post(this.apiUrl + '/project/search-chart', data, { withCredentials: true });
   }
-  getCompletedProject(data: number) {
-    return this.http.post(this.apiUrl + '/project/get-completed2', data, { withCredentials: true });
+  getProjectChartFromTo(data: any) {
+    return this.http.post(this.apiUrl + '/project/search-chart-from-to', data, { withCredentials: true });
+  }
+  getCompletedProject() {
+    return this.http.get(this.apiUrl + '/project/get-completed2', { withCredentials: true });
+  }
+
+  getCompletedProjectFromTo(data: any) {
+    return this.http.post(this.apiUrl + '/project/get-from-to', data, { withCredentials: true });
   }
   getProjectName() {
     return this.http.get(this.apiUrl + '/project/get-project-name', { withCredentials: true });
   }
-
   getStaff() {
     return this.http.get(this.apiUrl + '/staff/get-staff', { withCredentials: true });
   }
