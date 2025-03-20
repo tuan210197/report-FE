@@ -14,11 +14,11 @@ import { ShareService } from '../services/share.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private share : ShareService, private router: Router) { }
+  constructor(private share: ShareService, private router: Router) { }
 
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-   
+
     if (req.url.includes('/user/check-auth')) {
       return next.handle(req);
     }
@@ -26,8 +26,6 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 200) return throwError(() => error); // Nếu status code là 200 thì không xử lý lỗi
         let errorMessage = 'ERROR'; // Mặc định thông báo lỗi
-        console.log(error.status);
-
         if (error.status === 400) {
           errorMessage = error.error.message;
         } else if (error.status === 401) {
@@ -39,7 +37,17 @@ export class AuthInterceptor implements HttpInterceptor {
         } else if (error.status === 404) {
           errorMessage = error.error.message;
         } else if (error.status === 500) {
-          errorMessage = error.error.message;
+          // debugger;
+       
+          if (error.error.message.includes('duplicate key value')) {
+            errorMessage = 'Tên Đã Tồn Tại';
+
+          } else if (error.error.message.includes('value too long')){
+            errorMessage = 'Giá Trị Quá Dài';
+          }else {
+            errorMessage = error.error.message;
+          }
+          console.log(error.error.message); 
         }
 
         // Hiển thị thông báo lỗi lên giao diện bằng SweetAlert2

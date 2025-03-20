@@ -23,12 +23,13 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 interface dataTable {
+  reportId: number;
   user: string;
   requester: string;
   project: string;
   category: string;
   address: string;
-  progress: string;
+  // progress: string;
   quantityCompleted: number;
   quantityRemain: number;
   contractor: string;
@@ -96,6 +97,7 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       endDate: [''],
       implement: ['', [Validators.required]],
       exportDate: [''],
+      search: [''],
 
     });
 
@@ -126,10 +128,6 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
         this.projectsSearch = data?.data ?? [];
       });
   }
-
-
-
-
   checkFormErrors(formGroup: FormGroup): boolean {
     let isValid = true;
     Object.keys(formGroup.controls).forEach((key) => {
@@ -138,17 +136,14 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       // Đánh dấu control là touched để hiển thị lỗi
       if (control) {
         control.markAsTouched();
-
         // Kiểm tra nếu có lỗi
         if (control.invalid) {
           isValid = false;
         }
       }
     });
-
     return isValid;
   }
-
 
   getProjectName() {
     this.share.getProjectName().subscribe((data: any) => {
@@ -159,11 +154,7 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
   }
 
   getProjectByUserId() {
-    // this.share.getProjectByUserId().subscribe((data: any) => {
-    //   this.projects = data; // Gán dữ liệu vào mảng projects
-    // }, (error) => {
-    //   // console.error('Lỗi khi tải dự án:', error);
-    // });
+
     this.share.getProjectName().subscribe((data: any) => {
       this.projects = data; // Gán dữ liệu vào mảng projects
     }, (error) => {
@@ -173,10 +164,8 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories
-      // console.log(data);
     },
       (error) => {
-        // console.error('Lỗi khi tải danh mục:', error);
 
       });
   }
@@ -184,14 +173,15 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
   async getAllDailyReport() {
     this.listData = []
     const list = await firstValueFrom(this.share.getDailyReport()) as dataTable[];
-    console.log(list);
+    // console.log(list);
     list.forEach((item: dataTable) => this.listData.push({
+      reportId: item.reportId,
       user: item.user,
       requester: item.requester,
       project: item.project,
       category: item.category,
       address: item.address,
-      progress: item.progress,
+      // progress: item.progress,
       quantityCompleted: item.quantityCompleted,
       quantityRemain: item.quantityRemain,
       contractor: item.contractor,
@@ -203,7 +193,6 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
   }
   onSubmit() {
     if (this.checkFormErrors(this.form)) {
-
       var val = {
         requester: this.form.value.requester,
         address: this.form.value.address,
@@ -336,6 +325,19 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
     var data = { projectName: query };
     return this.share.searchByName(data);
   }
+  searchReport() {
+    var val = {
+      keyword: this.form.value.search.toUpperCase()
+    }
+    console.log(val);
+    this.share.seardchDailyReport(val).subscribe((data: any) => {
+      this.dataSource.data = [];
+      this.dataSource.data = data.data;
+    });
+  }
+  showDetail(data:any){
+    console.log(data);
+  }
   async exportToExcel() {
     var val = {
       date: this.convertToCustomFormatDate(this.form.value.exportDate)
@@ -383,7 +385,7 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       // item.progress,
       // this.convertToCustomFormatDate(item.startDate),
       this.convertToCustomFormatDate(item.endDate),
-      item.implement,
+      item.implement.toLowerCase(),
       item.fullName,
 
 

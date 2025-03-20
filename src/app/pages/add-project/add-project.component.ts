@@ -101,7 +101,8 @@ export class AddProjectComponent implements OnInit {
       categoryId: this.form.value.categoryId,
       startDate: this.form.value.startDate,
       description: this.form.value.description,
-      submembers: this.form.value.submember
+      submembers: this.form.value.submember,
+      year: this.form.value.startDate.getFullYear(),
     }
     console.log(val);
     this.share.addProject(val).subscribe(async (data: any) => {

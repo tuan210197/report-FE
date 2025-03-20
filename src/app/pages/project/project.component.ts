@@ -26,6 +26,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Colors } from '../../common/color-chart';
 
 
 export interface table {
@@ -38,6 +39,7 @@ export interface table {
   canceled: boolean;
   startDate: string;
   endDate: string;
+  status: string;
 }
 
 @Component({
@@ -86,6 +88,10 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
   uniqueNames: string[] = [];
   uniqueCategories: string[] = [];
+  categories: any[] = []; // Mảng lưu danh sách danh mục
+
+  statusList: any[] = [];
+
 
   private searchSubject = new Subject<string>();
 
@@ -122,12 +128,11 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     });
 
   }
-  categories: any[] = []; // Mảng lưu danh sách danh mục
 
 
 
   ngOnInit() {
-
+    this.getAllStatus();
     this.form.get('inputText')?.valueChanges.pipe(
       debounceTime(this.debounceTimeMs)
     ).subscribe(searchValue => {
@@ -135,22 +140,11 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         this.loadProject();
       } else {
         this.performSearch(searchValue);
-
       }
     }
     );
     this.dataService.currentData.subscribe((data) => {
-      // if ('year' in data) {
-      //   if (data) {
-      //     this.getCategory();
-      //     this.getStaff();
-      //     this.loadProjectChart(data);
-      //   } else {
-      //     this.getCategory();
-      //     this.getStaff();
-      //     this.loadProject();
-      //   }
-      // } else {
+      // console.log(data)
       this.getStaff();
       if (data === null) {
         this.getCategory();
@@ -161,7 +155,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
           this.getCategory();
           this.loadProjectChartFromTo(data);
         } else {
-          debugger;
+
           this.getCategory();
           this.loadProjectChart(data);
         }
@@ -169,7 +163,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
   async performSearch(searchValue: string) {
-
+    debugger;
     var val = {
       projectName: searchValue.toUpperCase(),
       categoryName: searchValue.toLocaleUpperCase()
@@ -187,7 +181,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         completed: item.completed,
         canceled: item.canceled,
         startDate: item.startDate,
-        endDate: item.endDate
+        endDate: item.endDate,
+        status: item.status.statusId
       }))
     }
 
@@ -225,11 +220,10 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     this.loadProject();
 
     this.dataSource.filterPredicate = (data: any, filter: string) => {
-      console.log(data.completed.toString());
+      // console.log(data)
       const matchesName = this.selectedName ? data.pic.fullName === this.selectedName : true;
       const matchesCategory = this.selectedCategory ? data.category.categoryName === this.selectedCategory : true;
-      const matchesCompleted = this.selectedCompleted === null || this.selectedCompleted === '' ? true : this.getStatusText(data) === this.selectedCompleted;
-
+      const matchesCompleted = this.selectedCompleted === null || this.selectedCompleted === '' ? true : data.status === this.selectedCompleted;
       return matchesName && matchesCategory && matchesCompleted;
     };
 
@@ -260,50 +254,58 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
   async delete(data: number): Promise<void> {
-    Swal.fire({
-      title: 'Bạn có chắc chắn muốn xóa?',
-      icon: 'warning',
-      showCancelButton: true,
+    const admin: any = await firstValueFrom(this.share.getCurrentUser());
+    if (admin.role.role_id === 1) {
+      Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa?',
+        icon: 'warning',
+        showCancelButton: true,
 
-      confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy',
-      customClass: {
-        confirmButton: 'btn btn-danger me-2',
-        cancelButton: 'btn btn-success ms-2',
-      }
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        var val = { projectId: data };
-        console.log(val)
-        try {
-          const isDeleted: any = await firstValueFrom(this.share.deleteProject(val));
-
-          if (isDeleted.code === '200') {
-            Swal.fire('Deleted', isDeleted.message, 'success');
-            this.loadProject();
-          } else {
-            Swal.fire('Delete Fail', isDeleted.message, 'info');
-          }
-        } catch (error) {
-          Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xóa!', 'error');
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy',
+        customClass: {
+          confirmButton: 'btn btn-danger me-2',
+          cancelButton: 'btn btn-success ms-2',
         }
-      }
-    });
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          var val = { projectId: data };
+          // console.log(val)
+          try {
+            const isDeleted: any = await firstValueFrom(this.share.deleteProject(val));
+
+            if (isDeleted.code === '200') {
+              Swal.fire('Deleted', isDeleted.message, 'success');
+              this.loadProject();
+            } else {
+              Swal.fire('Delete Fail', isDeleted.message, 'info');
+            }
+          } catch (error) {
+            Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xóa!', 'error');
+          }
+        }
+      });
+    }
   }
 
 
-  openDialog() {
-    this.dialog.open(AddProjectComponent, {
-      width: '50vw', // Đặt kích thước dialog
-      height: 'auto',
-      data: {} // Nếu cần truyền thêm dữ liệu vào form
-    });
+  async openDialog() {
+    const admin: any = await firstValueFrom(this.share.getCurrentUser());
+    if (admin.role.role_id === 1) {
+      this.dialog.open(AddProjectComponent, {
+        width: '50vw', // Đặt kích thước dialog
+        height: 'auto',
+        data: {} // Nếu cần truyền thêm dữ liệu vào form
+      });
+    }else{
+      Swal.fire('Thông báo', 'Bạn không có quyền thêm dự án', 'info');
+    }
   }
 
   async loadProject() {
-
     this.tableList = [];
     const data = await firstValueFrom(this.share.getProject());
+    // console.log(data)
     if (Array.isArray(data) && data.length > 0) {
       data.forEach(item => this.tableList.push({
         projectName: item.projectName,
@@ -314,7 +316,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         completed: item.completed,
         canceled: item.canceled,
         startDate: item.startDate,
-        endDate: item.endDate
+        endDate: item.endDate,
+        status: item.status.statusId
       }))
     }
 
@@ -322,60 +325,73 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async loadProjectChart(chart: any) {
-    console.log(chart)
-    let total = '';
-    let remain = '#00e272';
-    let completed = '#544fc5';
-    let cancelled = '#fe6a35';
+    debugger;
+    // console.log(chart)
+    let total = Colors.TOTAL_PROJECTS;
+    let remain = Colors.REMAIN_PROJECTS;
+    let acceptance = Colors.ACCEPTANCE_PROJECTS;
+    let completed = Colors.COMPLETED_PROJECTS;
+    let cancelled = Colors.CANCELED_PROJECTS;
+
     if (chart.color === completed) {
       var val = {
-        completed: true,
+        type: 'completed',
         categoryName: chart.category,
-        cancelled: false,
+        status: chart.id
       }
-
     } else if (chart.color === remain) {
       var val = {
-        completed: false,
+        type: 'remain',
         categoryName: chart.category,
-        cancelled: false,
+        status: chart.id
       }
 
     } else if (chart.color === cancelled) {
       var val = {
-        completed: false,
+        type: 'cancelled',
         categoryName: chart.category,
-        cancelled: true,
+        status: chart.id
       }
 
+    } else if (chart.color === acceptance) {
+      val = {
+        type: 'acceptance',
+        categoryName: chart.category,
+        status: chart.id
+      }
     }
     else {
       if (chart.isCompleted === 'Completed') {
-        var val = {
-          completed: true,
+        var val: { type: string; categoryName: any; status: any } = {
+          type: 'completedTotal',
           categoryName: chart.category,
-          cancelled: false,
+          status: 'completed'
         }
-
       }
       else if (chart.isCompleted === 'In Progress') {
-        var val = {
-          completed: false,
+        var val: { type: string; categoryName: any; status: any } = {
+          type: 'remainTotal',
           categoryName: chart.category,
-          cancelled: false,
+          status: chart.id
         }
 
 
-      } else {
-        var val = {
-          completed: false,
+      } else if (chart.isCompleted === 'Acceptance') {
+        var val: { type: string; categoryName: any; status: any } = {
+          type: 'acceptanceTotal',
           categoryName: chart.category,
-          cancelled: true,
+          status: chart.id
+        }
+      } else {
+        var val: { type: string; categoryName: any; status: any } = {
+          type: 'cancelledTotal',
+          categoryName: chart.category,
+          status: 'cancelled'
         }
 
       }
     }
-
+    // console.log(val)
     this.tableList = [];
     const data: any = await firstValueFrom(this.share.getProjectChart(val));
 
@@ -390,6 +406,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         canceled: boolean;
         startDate: string;
         endDate: string;
+        status: { statusId: string };
       }) => this.tableList.push({
         projectName: item.projectName,
         category: item.category,
@@ -399,75 +416,98 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         completed: item.completed,
         canceled: item.canceled,
         startDate: item.startDate,
-        endDate: item.endDate
+        endDate: item.endDate,
+        status: item.status.statusId
       }));
     }
     this.dataSource.data = this.tableList;
   }
   async loadProjectChartFromTo(chart: any) {
-    console.log(chart)
+    // console.log(chart)
 
     debugger;
-    let total = '';
-    let remain = '#00e272';
-    let completed = '#544fc5';
-    let cancelled = '#fe6a35';
+    let total = Colors.TOTAL_PROJECTS;
+    let remain = Colors.REMAIN_PROJECTS;
+    let acceptance = Colors.ACCEPTANCE_PROJECTS;
+    let completed = Colors.COMPLETED_PROJECTS;
+    let cancelled = Colors.CANCELED_PROJECTS;
     if (chart.color === completed) {
       var val = {
-        completed: true,
+        type: 'completed',
         categoryName: chart.category,
-        cancelled: false,
         from: chart.from,
-        to: chart.to
+        to: chart.to,
+        status: chart.id
       }
 
     } else if (chart.color === remain) {
+      debugger;
       var val = {
-        completed: false,
+        type: 'remain',
         categoryName: chart.category,
-        cancelled: false,
         from: chart.from,
-        to: chart.to
+        to: chart.to,
+        status: chart.id
       }
 
     } else if (chart.color === cancelled) {
       var val = {
-        completed: false,
+        type: 'cancelled',
         categoryName: chart.category,
-        cancelled: true,
         from: chart.from,
-        to: chart.to
+        to: chart.to,
+        status: chart.id
       }
 
     }
+
+    else if (chart.color === acceptance) {
+      var val = {
+        type: 'acceptance',
+        categoryName: chart.category,
+        from: chart.from,
+        to: chart.to,
+        status: chart.id
+      }
+    }
     else {
       if (chart.isCompleted === 'Completed') {
-        var val = {
-          completed: true,
+        var val: { type: string; categoryName: any; from: any, to: any, status: any } = {
+          type: 'completedTotal',
           categoryName: chart.category,
-          cancelled: false,
           from: chart.from,
-          to: chart.to
+          to: chart.to,
+          status: 'completed'
         }
 
       }
       else if (chart.isCompleted === 'In Progress') {
-        var val = {
-          completed: false,
+        var val: { type: string; categoryName: any; from: any, to: any, status: any } = {
+          type: 'remainTotal',
           categoryName: chart.category,
-          cancelled: false,
           from: chart.from,
-          to: chart.to
+          to: chart.to,
+          status: chart.id
         }
 
 
-      } else {
-        var val = {
-          completed: false,
+      }
+      else if (chart.isCompleted === 'Acceptance') {
+        var val: { type: string; categoryName: any; from: any, to: any, status: any } = {
+          type: 'acceptanceTotal',
           categoryName: chart.category,
-          cancelled: true,
           from: chart.from,
-          to: chart.to
+          to: chart.to,
+          status: chart.id
+        }
+      }
+      else {
+        var val: { type: string; categoryName: any; from: any, to: any, status: any } = {
+          type: 'cancelledTotal',
+          categoryName: chart.category,
+          from: chart.from,
+          to: chart.to,
+          status: 'cancelled'
         }
 
       }
@@ -487,6 +527,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         canceled: boolean;
         startDate: string;
         endDate: string;
+        status: { statusId: string };
       }) => this.tableList.push({
         projectName: item.projectName,
         category: item.category,
@@ -496,7 +537,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         completed: item.completed,
         canceled: item.canceled,
         startDate: item.startDate,
-        endDate: item.endDate
+        endDate: item.endDate,
+        status: item.status.statusId
       }));
     }
     this.dataSource.data = this.tableList;
@@ -571,8 +613,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       projectId: this.selectedProjectId,
       pic: this.form.value.user
     }
-    console.log(val.startDate)
-    console.log(val.endDate)
+    // console.log(val.startDate)
+    // console.log(val.endDate)
     this.share.updateProject(val).subscribe((data: any) => {
 
       if (data.code === '200') {
@@ -608,7 +650,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
             projectId: element.projectId,
             completed: element.completed,
           }
-          console.log(val)
+          // console.log(val)
           await firstValueFrom(this.share.updateStatus(val));
           // this.loadProject();
         } else {
@@ -638,68 +680,58 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // Hàm lấy text theo trạng thái
   getStatusText(project: any): string {
-    if (project.canceled) {
-      return 'Cancelled';
-    }
-    if (project.completed) {
-      return 'Completed';
-    }
-    return 'In Progress';
+
+    return project.status;
   }
-  confirmChange(data: any) {
-
-    Swal.fire({
-      title: 'Confirm Status Change?',
-      text: 'Do you want to change the status of this project?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Change Status',
-      cancelButtonText: 'Cancelled',
-      customClass: {
-        confirmButton: 'btn btn-success me-2',
-        cancelButton: 'btn btn-danger ms-2',
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Danh sách tất cả trạng thái
-        const allStatusOptions: { [key: string]: string } = {
-          remain: 'In Progress',
-          completed: 'Completed',
-          canceled: 'Cancelled',
-        };
-
-        let currentStatus: string = '';
-        if (data.completed === true) {
-          currentStatus = 'completed';
-        } else if (data.canceled === true) {
-          currentStatus = 'canceled';
-        } else {
-          currentStatus = 'remain';
+  async confirmChange(data: any) {
+    const admin: any = await firstValueFrom(this.share.getCurrentUser());
+    if (admin.role.role_id === 1) {
+      Swal.fire({
+        title: 'Confirm Status Change?',
+        text: 'Do you want to change the status of this project?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Change Status',
+        cancelButtonText: 'Cancelled',
+        customClass: {
+          confirmButton: 'btn btn-success me-2',
+          cancelButton: 'btn btn-danger ms-2',
         }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Danh sách tất cả trạng thái
+          const allStatusOptions = this.statusList;
+          // console.log(allStatusOptions)
+          let currentStatus = data.status;
+          const statusOptions = allStatusOptions
+            .filter(status => status.statusId !== currentStatus)
+            .reduce((acc, status) => {
+              acc[status.statusId] = status.statusName;
+              return acc;
+            }, {} as { [key: string]: string });
+          // console.log(statusOptions)
+          Swal.fire({
+            title: 'Update Status',
+            input: 'select',
+            inputOptions: statusOptions, // Truyền danh sách trạng thái đã loại bỏ trạng thái hiện tại
+            inputPlaceholder: 'Choose a status',
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            cancelButtonText: 'Cancelled',
+            customClass: {
+              confirmButton: 'btn btn-success me-2',
+              cancelButton: 'btn btn-danger ms-2',
+            }
+          }).then((newStatus) => {
+            if (newStatus.isConfirmed && newStatus.value) {
+              // console.log(newStatus.value)
+              this.updateProjectStatus(newStatus.value, data.projectId);
+            }
+          });
+        }
+      });
+    }
 
-        // Tạo một object mới, lọc bỏ trạng thái hiện tại
-        const statusOptions = Object.fromEntries(
-          Object.entries(allStatusOptions).filter(([key]) => key !== currentStatus)
-        );
-        Swal.fire({
-          title: 'Update Status',
-          input: 'select',
-          inputOptions: statusOptions, // Truyền danh sách trạng thái đã loại bỏ trạng thái hiện tại
-          inputPlaceholder: 'Choose a status',
-          showCancelButton: true,
-          confirmButtonText: 'Update',
-          cancelButtonText: 'Cancelled',
-          customClass: {
-            confirmButton: 'btn btn-success me-2',
-            cancelButton: 'btn btn-danger ms-2',
-          }
-        }).then((newStatus) => {
-          if (newStatus.isConfirmed && newStatus.value) {
-            this.updateProjectStatus(newStatus.value, data.projectId);
-          }
-        });
-      }
-    });
   }
   async updateProjectStatus(status: any, projectId: any) {
 
@@ -730,9 +762,15 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       // Kết hợp thành chuỗi định dạng "YYYY-MM-DD HH:mm"
       return `${year}-${month}-${day}`;
     } catch (error) {
-      console.error("Invalid date string:", error);
+      // console.error("Invalid date string:", error);
       return null;
     }
+  }
+  getAllStatus() {
+    this.share.getAllStatus().subscribe((data: any) => {
+      // console.log(data.data)
+      this.statusList = data.data;
+    });
   }
 }
 

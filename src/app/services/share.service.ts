@@ -10,8 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ShareService {
 
-  private apiUrl = '/api';
-  // private apiUrl = 'http://10.81.160.29:8080/api'
+  // private apiUrl = '/api';
+  private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -47,7 +47,7 @@ export class ShareService {
     return this.http.post(this.apiUrl + '/user/check-auth', {}, { withCredentials: true });
   }
   getCharts() {
-    return this.http.get(this.apiUrl + "/project/dashboard", { withCredentials: true });
+    return this.http.get(this.apiUrl + '/project/dashboard', { withCredentials: true });
   }
 
   getChartFromTo(data: any) {
@@ -107,6 +107,9 @@ export class ShareService {
   deleteProject(data: any) {
     return this.http.post(this.apiUrl + '/project/delete', data, { withCredentials: true });
   }
+  getAllStatus(){
+    return this.http.get(this.apiUrl + '/status/get-all', { withCredentials: true });
+  }
   /* End Project*/
 
   /*start category */
@@ -141,6 +144,9 @@ export class ShareService {
 
   getMaxDateExport() {
     return this.http.get(this.apiUrl + '/daily-report/get-max-export-date', { withCredentials: true });
+  }
+  seardchDailyReport(data: any){
+    return this.http.post(this.apiUrl + '/daily-report/search-report', data, { withCredentials: true });
   }
   /*end daily report */
   /*implement */
