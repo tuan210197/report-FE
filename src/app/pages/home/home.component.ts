@@ -89,8 +89,16 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadChartData();
+    this.getYear();
   }
 
+  getYear() {
+    this.share.getMinMaxYear().subscribe((data: any) => {
+      console.log(data);
+      this.fromYear.setValue(moment(data.data.minYear, 'YYYY')); // Mặc định là năm trước
+      this.toYear.setValue(moment(data.data.maxYear, 'YYYY')); // Mặc định là năm hiện tại
+    })
+  }
   searchFromTo() {
     if (this.fromYear.value && this.toYear.value && this.fromYear.value.year() > this.toYear.value.year()) {
       alert("From year must be less than To year");
@@ -104,18 +112,10 @@ export class HomeComponent implements OnInit {
   }
   setFromYear(normalizedMonthAndYear: Moment, datepicker: MatDatepicker<Moment>) {
     this.fromYear.setValue(moment(normalizedMonthAndYear.year().toString(), 'YYYY')); // Chỉ lấy năm
-
-    // const ctrlValue = this.fromYear.value!;
-    // ctrlValue.year(normalizedMonthAndYear.year());
-    // this.fromYear.setValue(ctrlValue); // Lưu năm
     datepicker.close();
   }
   setToYear(normalizedMonthAndYear: Moment, datepicker: MatDatepicker<Moment>) {
     this.toYear.setValue(moment(normalizedMonthAndYear.year().toString(), 'YYYY')); // Chỉ lấy năm
-
-    // const ctrlValue = this.toYear.value!;
-    // ctrlValue.year(normalizedMonthAndYear.year());
-    // this.toYear.setValue(ctrlValue); // Lưu năm
     datepicker.close();
   }
 
@@ -744,7 +744,7 @@ export class HomeComponent implements OnInit {
                     const from = this.fromYear.value?.year();
                     const to = this.toYear.value?.year();
                     const year = this.date.value?.year() ?? new Date().getFullYear()
-                    const data = { category, color,from,to, year, id };
+                    const data = { category, color, from, to, year, id };
                     this.dataService.changeData(data);
                     this.router.navigate(['/project']);
                   }
@@ -765,7 +765,7 @@ export class HomeComponent implements OnInit {
                     const from = this.fromYear.value?.year();
                     const to = this.toYear.value?.year();
                     const year = this.date.value?.year() ?? new Date().getFullYear()
-                    const data = { category, color,from,to, year, id };
+                    const data = { category, color, from, to, year, id };
                     this.dataService.changeData(data);
                     this.router.navigate(['/project']);
                   }

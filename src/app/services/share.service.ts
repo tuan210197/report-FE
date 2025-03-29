@@ -10,8 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ShareService {
 
-  // private apiUrl = '/api';
-  private apiUrl = 'http://10.81.160.29:8080/api'
+  private apiUrl = '/api';
+  // private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -36,6 +36,10 @@ export class ShareService {
         console.error('Login error:', err);
         return false;
       });
+  }
+
+  getMinMaxYear(){
+    return this.http.get(this.apiUrl + '/home/get-year', { withCredentials: true });
   }
 
   logout() {
@@ -204,6 +208,9 @@ export class ShareService {
     return this.http.get(this.apiUrl + '/files/download/' + fileName, {
       responseType: 'blob', withCredentials: true // Quan trọng để tải file nhị phân
     });
+  }
+  SearchFileByProject (projectId: any) {
+    return this.http.get(this.apiUrl + '/files/get-by-project/'+projectId, { withCredentials: true });
   }
 }
 

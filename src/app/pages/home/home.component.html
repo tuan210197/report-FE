@@ -1,7 +1,6 @@
   <h2 class="title">
     {{'control' | translate}}
   </h2>
-  <br>
 <div class="year">
     <mat-form-field appearance="outline" class="col-md-2">
       <mat-label>{{'from'|translate}}</mat-label>
@@ -17,7 +16,7 @@
       <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
       <mat-datepicker #toPicker startView="multi-year" (yearSelected)="setToYear($event, toPicker)"></mat-datepicker>
     </mat-form-field>
-  <button type="button" class="btn btn-primary" (click)="searchFromTo()"> <mat-icon>search</mat-icon></button>
+  <button type="button" class="btn btn-primary" (click)="searchFromTo()"> <mat-icon>search</mat-icon>{{'search'|translate}}</button>
 </div>
 <div class="container-fluid">
 

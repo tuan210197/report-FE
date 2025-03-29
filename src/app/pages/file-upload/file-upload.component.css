@@ -12,7 +12,7 @@
   }
   .container-fluid {
     height: 90vh;
-    width: 100%;
+    width: 90%;
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
@@ -94,4 +94,30 @@ mat-row:hover, tr:hover {
   margin-right: 10px;
   margin-left: 10px;
 
+}
+.button-container {
+  display: flex;
+  gap: 12px;
+  /* Khoảng cách giữa các nút */
+  justify-content: flex-start;
+  /* Căn trái */
+  margin-top: 10px;
+  /* Khoảng cách trên */
+  padding: 10px 16px;
+  /* Tăng kích thước button */
+  justify-content: center
+
+
+}
+
+button {
+  min-width: 130px;
+  /* Đảm bảo nút không quá nhỏ */
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  /* Căn giữa icon và text */
+  justify-content: center;
+  /* Canh giữa */
 }

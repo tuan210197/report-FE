@@ -61,9 +61,9 @@ interface dataTable {
 export class DailyReportComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'position', 'requester',
-    'projectName', 'categoryName', 'address',
+    'projectName', 'categoryName', 'address', 'quantity',
     'quantityCompleted', 'quantityRemain', 'contractor',
-    'quantity', 'numberWorker'];
+     'numberWorker'];
   dataSource = new MatTableDataSource<dataTable>([]);
   model: any;
   color = '#ADD8E6';

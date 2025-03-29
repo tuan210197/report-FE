@@ -36,12 +36,21 @@
         </mat-form-field>
       </mat-grid-tile>
 
-      <mat-grid-tile>
-        <button type="button" class="btn btn-success" (click)="uploadFile()" [disabled]="!selectedFile">Upload
-          <mat-icon>upload</mat-icon></button>
 
+      <mat-grid-tile class="button-container">
+        <button type="button" class="btn btn-success me-2" (click)="uploadFile()" [disabled]="!selectedFile">
+          Upload <mat-icon>upload</mat-icon>
+        </button>
+      
+        <button type="button" class="btn btn-primary me-2" (click)="searchFile()">
+          {{'search'|translate}} <mat-icon>search</mat-icon>
+        </button>
+      
+        <button type="button" class="btn btn-info me-2">
+          <mat-icon>refresh</mat-icon> {{'CLEAR' | translate}}
+        </button>
       </mat-grid-tile>
-
+      
     </mat-grid-list>
 
 
@@ -60,6 +69,11 @@
       <ng-container matColumnDef="projectName">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color">{{'PROJECT_NAME' | translate}}</th>
         <td mat-cell *matCellDef="let element"> {{element.projectName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef [style.background-color]="color">{{'CATEGORY' | translate}}</th>
+        <td mat-cell *matCellDef="let element"> {{element.category}} </td>
       </ng-container>
 
       <ng-container matColumnDef="fileName">

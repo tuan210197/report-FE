@@ -22,7 +22,7 @@ import { AppTranslateService } from '../../services/translate.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -71,13 +71,15 @@ export interface table {
 })
 export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   tableList: table[] = [];
-  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'description', 'status', 'startDate', 'endDate', 'actions', 'delete'];
+  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'document', 'status', 'startDate', 'endDate', 'actions', 'delete'];
   dataSource = new MatTableDataSource<table>(this.tableList);
   model: any;
   color = '#ADD8E6';
   selectedProjectId: number | null = null; // Biến lưu id của dự án
   inputText: string = '';
   form: FormGroup;
+  projectForm!: FormGroup; // Khai báo FormGroup
+
   // searchForm: FormGroup;
   users: any[] = [];
   selectedUser: string | null = null;
@@ -100,7 +102,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     private share: ShareService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private dataService: DataService
+    private router: Router,
+    private dataService: DataService,
   ) {
     this.form = this.fb.group({
       startReceiveRequest: [null],
@@ -151,7 +154,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         this.loadProject();
       } else {
         if ('from' in data) {
-          debugger;
+          
           this.getCategory();
           this.loadProjectChartFromTo(data);
         } else {
@@ -163,7 +166,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
   async performSearch(searchValue: string) {
-    debugger;
+    
     var val = {
       projectName: searchValue.toUpperCase(),
       categoryName: searchValue.toLocaleUpperCase()
@@ -297,7 +300,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         height: 'auto',
         data: {} // Nếu cần truyền thêm dữ liệu vào form
       });
-    }else{
+    } else {
       Swal.fire('Thông báo', 'Bạn không có quyền thêm dự án', 'info');
     }
   }
@@ -325,7 +328,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async loadProjectChart(chart: any) {
-    debugger;
     // console.log(chart)
     let total = Colors.TOTAL_PROJECTS;
     let remain = Colors.REMAIN_PROJECTS;
@@ -425,7 +427,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   async loadProjectChartFromTo(chart: any) {
     // console.log(chart)
 
-    debugger;
+    
     let total = Colors.TOTAL_PROJECTS;
     let remain = Colors.REMAIN_PROJECTS;
     let acceptance = Colors.ACCEPTANCE_PROJECTS;
@@ -441,7 +443,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       }
 
     } else if (chart.color === remain) {
-      debugger;
+      
       var val = {
         type: 'remain',
         categoryName: chart.category,
@@ -615,6 +617,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     // console.log(val.startDate)
     // console.log(val.endDate)
+    console.log(val)
     this.share.updateProject(val).subscribe((data: any) => {
 
       if (data.code === '200') {
@@ -771,6 +774,12 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       // console.log(data.data)
       this.statusList = data.data;
     });
+  }
+  handleClick(event: MouseEvent, projectId: number) {
+    event.preventDefault(); // Ngăn chặn chuyển hướng mặc định
+
+    this.dataService.setProjectId(projectId); // Gửi projectId đến service
+    this.router.navigate(['/files']);
   }
 }
 

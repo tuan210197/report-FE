@@ -32,9 +32,9 @@ import { AppTranslateService } from '../../services/translate.service';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule, // Nếu dùng Moment.js thì thay bằng MatMomentDateModule
-    FormsModule, 
-    MatSelectModule, 
-    ReactiveFormsModule, 
+    FormsModule,
+    MatSelectModule,
+    ReactiveFormsModule,
     CommonModule,
     TranslateModule
   ],
@@ -60,7 +60,7 @@ export class AddProjectComponent implements OnInit {
   selectedUser: string | null = null;
 
   form: FormGroup;
-  constructor(private fb: FormBuilder, private share: ShareService,
+  constructor(private fb: FormBuilder, private share: ShareService, 
     private dialogRef: MatDialogRef<AddProjectComponent> // Tham chiếu đến dialog
   ) {
     this.form = this.fb.group({
@@ -71,11 +71,11 @@ export class AddProjectComponent implements OnInit {
       startDate: []
     });
   }
-    translateService = inject(AppTranslateService);
-  
-    switchLanguage() {
-      this.translateService.switchLanguage();
-    }
+  translateService = inject(AppTranslateService);
+
+  switchLanguage() {
+    this.translateService.switchLanguage();
+  }
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories
@@ -99,7 +99,7 @@ export class AddProjectComponent implements OnInit {
     var val = {
       projectName: this.form.value.projectName,
       categoryId: this.form.value.categoryId,
-      startDate: this.form.value.startDate,
+      startDate: this.convertToCustomFormat(this.form.value.startDate),
       description: this.form.value.description,
       submembers: this.form.value.submember,
       year: this.form.value.startDate.getFullYear(),
@@ -160,7 +160,7 @@ export class AddProjectComponent implements OnInit {
       const minutes = String(date.getMinutes()).padStart(2, '0');
 
       // Kết hợp thành chuỗi định dạng "YYYY-MM-DD HH:mm"
-      return `${year}-${month}-${day} ${hours}:${minutes}`;
+      return `${year}-${month}-${day}`;
     } catch (error) {
       console.error("Invalid date string:", error);
       return null;

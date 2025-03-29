@@ -257,12 +257,11 @@
           [ngClass]="{'selected-row': selectedRow === element}"> {{element.category.categoryName}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="description">
+      <ng-container matColumnDef="document">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color" class="mat-column-name4" mat-sort-header
-          sortActionDescription="Sort by description"> {{'description'
-          | translate}}</th>
-        <td mat-cell *matCellDef="let element" (click)="getRecord(element)"
-          [ngClass]="{'selected-row': selectedRow === element}"> {{element.description}} </td>
+          sortActionDescription="Sort by description"> {{'document'| translate}}</th>
+        <td mat-cell *matCellDef="let element" 
+          [ngClass]="{'selected-row': selectedRow === element}"><a  href="#" (click)="handleClick($event, element.projectId)">{{'document-list'|translate}}</a>   </td>
       </ng-container>
       <ng-container matColumnDef="startDate">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color" class="mat-column-name7" mat-sort-header

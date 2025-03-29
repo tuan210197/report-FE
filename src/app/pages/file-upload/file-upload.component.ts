@@ -20,11 +20,14 @@ import { AppTranslateService } from '../../services/translate.service';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { HttpClient } from '@angular/common/http';
+import { Data, Router } from '@angular/router';
+import { DataService } from '../../services/data.service';
 
 export interface table {
   projectName: string;
   fileName: string;
   uploadAt: string;
+  category: string;
 
 
 
@@ -59,17 +62,30 @@ export class FileUploadComponent implements OnInit {
   tableList: table[] = [];
   selectedProject: any = null; // Biến để lưu object được chọn
   projectsSearch: any[] = []; // Danh sách kết quả từ API
-
-
-  displayedColumns: string[] = ['position', 'projectName', 'fileName', 'uploadAt', 'actions'];
+  displayedColumns: string[] = ['position', 'projectName', 'category', 'fileName', 'uploadAt', 'actions'];
   dataSource = new MatTableDataSource<table>(this.tableList);
   model: any;
   color = '#ADD8E6';
+  receivedProjectId: number | null = null;
 
+  constructor(
+    private share: ShareService,
+    private dataService: DataService,
+    private router: Router) { }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.getAllDocument();
+
+    this.receivedProjectId = this.dataService.getProjectId(); // Nhận dữ liệu
+    if (this.receivedProjectId != null) {
+      this.SearchByUrlProject(this.receivedProjectId);
+      this.dataSource.paginator = this.paginator;
+    } else {
+      this.dataSource.paginator = this.paginator;
+      this.getAllDocument();
+
+    }
+
+
 
   }
   ngOnInit(): void {
@@ -78,11 +94,13 @@ export class FileUploadComponent implements OnInit {
       .pipe(
         debounceTime(300), // Đợi 500ms sau khi nhập để tránh gọi API quá nhiều lần
         switchMap(value => {
-          if (!value || value.trim() === '') {
+          const searchValue = typeof value === 'string' ? value.trim() : ''; // Kiểm tra giá trị đầu vào
+
+          if (!searchValue) {
             this.getProjectName(); // Nếu nhập rỗng, load lại toàn bộ
             return []; // Không gọi searchProjects
           }
-          return this.searchProjects(value); // Gọi API tìm kiếm
+          return this.searchProjects(searchValue); // Gọi API tìm kiếm
         })
       )
       .subscribe((data: any) => {
@@ -90,9 +108,7 @@ export class FileUploadComponent implements OnInit {
       });
   }
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog, private share: ShareService,private http: HttpClient) {
 
-  }
   formGroup = new FormGroup({
     projectId: new FormControl('') // Lưu projectId vào FormGroup
   });
@@ -163,33 +179,33 @@ export class FileUploadComponent implements OnInit {
   loadFiles(): void {
 
     this.share.loadFiles()
-      .subscribe((data) => console.log(data));
+      .subscribe();
   }
 
-   downloadFile(data: any) {
+  downloadFile(data: any) {
     // const url = `/api/files/download/${data.fileName}`;
 
-  this.share.downloadFile(data.fileName).subscribe(response => {
-    // Xác định loại file
-    const contentType = response.type || 'application/octet-stream';
-    
-    // Tạo blob
-    const blob = new Blob([response], { type: contentType });
-    const objectUrl = URL.createObjectURL(blob);
+    this.share.downloadFile(data.fileName).subscribe(response => {
+      // Xác định loại file
+      const contentType = response.type || 'application/octet-stream';
 
-    // Tạo link tải về
-    const a = document.createElement('a');
-    a.href = objectUrl;
-    a.download = data.fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(objectUrl);
-  }, error => {
-    console.error("Lỗi khi tải file:", error);
-  });
-   
-   
+      // Tạo blob
+      const blob = new Blob([response], { type: contentType });
+      const objectUrl = URL.createObjectURL(blob);
+
+      // Tạo link tải về
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = data.fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    }, error => {
+      console.error("Lỗi khi tải file:", error);
+    });
+
+
   }
   convertToCustomFormat(dateString: string): string | null {
     // Kiểm tra đầu vào có hợp lệ không
@@ -240,23 +256,70 @@ export class FileUploadComponent implements OnInit {
   async getAllDocument() {
     this.tableList = [];
     const data = await firstValueFrom(this.share.loadDocument());
-    console.log(data)
     if (Array.isArray(data) && data.length > 0) {
       data.forEach(item => this.tableList.push({
         projectName: item.projectId.projectName,
         fileName: item.fileName,
         uploadAt: item.uploadTime,
+        category: item.projectId.category.categoryName,
 
       }))
     }
 
     this.dataSource.data = this.tableList;
   }
+  async searchFile() {
+    let projectId: number = Number(this.formGroup.value.projectId) || 0;
+    console.log(projectId)
+    if (projectId == 0) {
+      debugger;
+      this.getAllDocument();
+    } else {
+      const data: any = await firstValueFrom(this.share.SearchFileByProject(projectId));
 
+      if (Array.isArray(data.data) && data.data.length > 0) {
+        this.tableList = [];
+        data.data.forEach((item: { projectId: { projectName: string; category: { categoryName: string } }; fileName: string; uploadTime: string }) =>
+          this.tableList.push({
+            projectName: item.projectId.projectName,
+            fileName: item.fileName,
+            uploadAt: item.uploadTime,
+            category: item.projectId.category.categoryName,
+          })
+        );
+        this.dataSource.data = this.tableList;
+      } else {
+        Swal.fire('Thông báo', 'Không có dữ liệu nào được tìm thấy!', 'info');
+      }
+    }
+
+  }
+  clearData() {
+    this.formGroup.reset(); // Đặt lại giá trị của formGroup về mặc định
+    this.searchControl.reset(); // Đặt lại giá trị của searchControl về mặc định
+    this.selectedProject = null; // Đặt lại giá trị của selectedProject về null 
+    this.selectedFile = null; // Đặt lại giá trị của selectedFile về null
+    document.getElementById("fileName")!.innerText = ''; // Đặt lại tên file hiển thị về rỗng
+    this.getAllDocument(); // Tải lại danh sách tài liệu
+  }
   triggerFileInput() {
     document.getElementById("fileInput")!.click();
   }
-  
 
-  
+  async SearchByUrlProject(projectId: number) {
+    const data: any = await firstValueFrom(this.share.SearchFileByProject(projectId));
+    this.tableList = [];
+    if (Array.isArray(data.data) && data.data.length > 0) {
+      data.data.forEach((item: { projectId: { projectName: string; category: { categoryName: string } }; fileName: string; uploadTime: string }) =>
+        this.tableList.push({
+          projectName: item.projectId.projectName,
+          fileName: item.fileName,
+          uploadAt: item.uploadTime,
+          category: item.projectId.category.categoryName,
+        })
+      );
+      this.dataSource.data = this.tableList;
+    }
+  }
+
 }
