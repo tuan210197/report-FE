@@ -105,5 +105,11 @@
     "cancelled": "Hủy",
     "contructing": "Đang thi công",
     "quote": "Báo giá",
-    "document-list": "Xem Tài Liệu Dự Án"
+    "document-list": "Xem Tài Liệu Dự Án",
+    "reporterName":"Người báo cáo",
+     "projectName":"Tên dự án",
+      "category":"Loại hình dự án", 
+      "address":"Địa chỉ", 
+      "implement":"Thực hiện công việc",
+       "createdAt":"Thời gian báo cáo"
 }

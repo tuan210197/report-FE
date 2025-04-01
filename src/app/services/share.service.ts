@@ -165,6 +165,9 @@ export class ShareService {
     return this.http.post(this.apiUrl + '/implement/get-implement-by-project', data, { withCredentials: true });
   }
 
+  getDetailDailyReport(data:any) {
+    return this.http.post(this.apiUrl + '/implement/get-detail-report', data, { withCredentials: true });
+  }
   /**Start user */
   getCurrentUser() {
     return this.http.get(this.apiUrl + '/staff/get-current', { withCredentials: true });

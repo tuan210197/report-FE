@@ -1,0 +1,83 @@
+.container-fluid {
+    height: 90vh;
+    width: 90%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.mat-column-name {
+    width: 250px;
+    /* Cố định độ rộng */
+    white-space: nowrap;
+    /* Ngăn không cho chữ xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn ra */
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." nếu quá dài */
+  }
+  .mat-column-name2 {
+    width: 300px;
+    /* Cố định độ rộng */
+    white-space: nowrap;
+    /* Ngăn không cho chữ xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn ra */
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." nếu quá dài */
+  }
+  
+  .mat-column-name3 {
+    width: 100px;
+    /* Cố định độ rộng */
+    white-space: nowrap;
+    /* Ngăn không cho chữ xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn ra */
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." nếu quá dài */
+  }
+  .mat-column-name4 {
+    width: 170px;
+    /* Cố định độ rộng */
+    white-space: nowrap;
+    /* Ngăn không cho chữ xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn ra */
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." nếu quá dài */
+  }
+  .mat-column-name5 {
+    width: 450px;
+    /* Cố định độ rộng */
+    white-space: nowrap;
+    /* Ngăn không cho chữ xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn ra */
+    text-overflow: ellipsis;
+    /* Hiển thị dấu "..." nếu quá dài */
+  }
+  .form-input{
+    padding-right: 20px;
+  }
+  
+.mat-icon {
+    margin-right: 10px;
+  
+  }
+  
+  mat-paginator {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    /* Khoảng cách trên và dưới */
+  }
+  
+  mat-row:hover,
+  tr:hover {
+    background-color: #d3d3d3;
+    /* Màu nền khi di chuột */
+    transition: background-color 0.3s;
+    /* Hiệu ứng mượt */
+  }
+  

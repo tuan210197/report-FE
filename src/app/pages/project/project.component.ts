@@ -91,7 +91,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   uniqueNames: string[] = [];
   uniqueCategories: string[] = [];
   categories: any[] = []; // Mảng lưu danh sách danh mục
-
   statusList: any[] = [];
 
 

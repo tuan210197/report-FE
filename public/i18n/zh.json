@@ -105,5 +105,11 @@
     "cancelled": "取消",
     "contructing": "施工中",
     "quote": "报价",
-     "document-list": "查看项目文件"
+    "document-list": "查看项目文件",
+    "reporterName": "报告者姓名",
+    "projectName": "项目名称",
+    "category": "项目类别",
+    "address": "地址",
+    "implement": "执行工作",
+    "createdAt": "报告时间"
 }

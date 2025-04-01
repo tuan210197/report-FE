@@ -14,6 +14,8 @@ import { AddProjectComponent } from './pages/add-project/add-project.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { FileUploadComponent } from './pages/file-upload/file-upload.component';
 import { CalendarComponent } from './pages/calendar/calendar.component';
+import { DailyReportDetailComponent } from './pages/daily-report-detail/daily-report-detail.component';
+import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 
 
 
@@ -31,6 +33,8 @@ export const routes: Routes = [
     { path: 'add-project', component: AddProjectComponent, canActivate: [AuthGuard] },
     { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [AuthGuard] },
     { path: 'files', component: FileUploadComponent, canActivate: [AuthGuard] }, // Redirect mặc định
+    { path: 'detail-report', component: DailyReportDetailComponent, canActivate: [AuthGuard] },
+    { path: '403', component: ForbiddenComponent }
     // { path: 'calender', component: CalendarComponent}
 
 ];

@@ -16,10 +16,8 @@ import { ShareService } from '../../services/share.service';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppTranslateService } from '../../services/translate.service';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { HttpClient } from '@angular/common/http';
 import { Data, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 
@@ -28,9 +26,6 @@ export interface table {
   fileName: string;
   uploadAt: string;
   category: string;
-
-
-
 }
 @Component({
   selector: 'app-file-upload',
@@ -84,9 +79,6 @@ export class FileUploadComponent implements OnInit {
       this.getAllDocument();
 
     }
-
-
-
   }
   ngOnInit(): void {
     this.getProjectName(); // Gọi khi load trang để lấy toàn bộ dự án
