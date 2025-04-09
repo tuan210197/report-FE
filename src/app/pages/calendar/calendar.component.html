@@ -1,26 +1,23 @@
 <div class="title">
-    <h4> 2025年03月份Fii越南資訊部值班安排時間表 <br>
-        LỊCH PHÂN CÔNG TRỰC BAN BỘ PHẬN FII IT THÁNG 03 NĂM 2025
+    <h4> {{year}}年{{month}}月份Fii越南資訊部值班安排時間表 <br>
+        LỊCH PHÂN CÔNG TRỰC BAN BỘ PHẬN FII IT THÁNG {{month}} NĂM {{year}}
     </h4>
     <br>
 </div>
-
 <div class="full-calendar-container">
     <p>Onsite值班：從18:30到20:30 <br>
-        Thời gian trực ban tại chỗ: Từ 18:30 đến 20:30"		
-        </p>
-        <full-calendar #fullCalendar [options]="calendarOptions"></full-calendar>
+        Thời gian trực ban tại chỗ: Từ 18:30 đến 20:30
+    </p>
+    <!-- <input type="file" (change)="onFileChange($event)" /> -->
+    <input type="file" (change)="onFileChange($event)" class="form-control"  />
+    <!-- <button (click)="uploadFile()">Upload</button> -->
+<br>
 
-</div>
+    <!-- <select [(ngModel)]="selectedUser" (change)="filterEventsByUser()">
+            <option *ngFor="let user of users" [value]="user.uid">{{ user.fullName }}</option>
+          </select> -->
+    <full-calendar #fullCalendar [options]="calendarOptions">
 
-<div class="col-md-6">
-    <mat-form-field class="full-width"> 
-        <mat-label>submember</mat-label>
-        <mat-select  >
-            <mat-option *ngFor="let user of users" [value]="user.uid">
-                {{ user.fullName }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
+    </full-calendar>
 
 </div>

@@ -1,0 +1,25 @@
+<div class="container-fluid">
+<form [formGroup]="userForm">
+  <div class="form-controls">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Chọn User</mat-label>
+        <mat-select formControlName="selectedUser">
+          <mat-option *ngFor="let user of users" [value]="user.uid">
+            {{ user.fullName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  
+
+  <!-- <mat-form-field appearance="outline">
+    <mat-label>Chọn Option</mat-label>
+    <mat-select formControlName="selectedOption">
+      <mat-option value="1"> Điện thoại trực ban電話值班</mat-option>
+      <mat-option value="2">Nghỉ lễ 放假 </mat-option>
+    </mat-select>
+  </mat-form-field> -->
+</form>
+<button class="btn btn-outline-primary" (click)="onSubmit()">Submit</button>
+
+</div>

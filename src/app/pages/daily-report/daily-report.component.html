@@ -48,13 +48,15 @@
     <mat-grid-list cols="4" class="row" rowHeight="100px">
       <!-- Project Name -->
       <mat-grid-tile>
-        <mat-form-field class="full-width" appearance="outline">
+        <mat-form-field class="full-width" appearance="outline" >
           <mat-label>{{ 'CATEGORY' | translate }}</mat-label>
-          <mat-select formControlName="categoryId">
+          <mat-select formControlName="categoryId" >
             <mat-option *ngFor="let category of categories" [value]="category.categoryId">
               {{ category.categoryName }}
             </mat-option>
           </mat-select>
+          <!-- <input matInput formControlName="categoryId" [value]="getCategoryName(form.get('categoryId')?.value)" readonly> -->
+
         </mat-form-field>
       </mat-grid-tile>
 

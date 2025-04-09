@@ -93,7 +93,7 @@
     "fileName": "Tên Tài Liệu",
     "dateUpload": "Ngày Tải Lên",
     "download": "Tải Xuống",
-    "all": "Tất Cả",   
+    "all": "Tất Cả",
     "new": "Dự án mới",
     "estimate": "Dự toán",
     "budget": "Hỏi giá",
@@ -106,10 +106,11 @@
     "contructing": "Đang thi công",
     "quote": "Báo giá",
     "document-list": "Xem Tài Liệu Dự Án",
-    "reporterName":"Người báo cáo",
-     "projectName":"Tên dự án",
-      "category":"Loại hình dự án", 
-      "address":"Địa chỉ", 
-      "implement":"Thực hiện công việc",
-       "createdAt":"Thời gian báo cáo"
+    "reporterName": "Người báo cáo",
+    "projectName": "Tên dự án",
+    "category": "Loại hình dự án",
+    "address": "Địa chỉ",
+    "implement": "Thực hiện công việc",
+    "createdAt": "Thời gian báo cáo",
+    "calendar": "Lịch trực"
 }

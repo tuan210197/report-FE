@@ -1,0 +1,15 @@
+.container-fluid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Căn giữa theo chiều dọc */
+  }
+  
+  mat-form-field {
+    width: 66.66%; /* 2/3 màn hình */
+    margin-bottom: 16px; /* Khoảng cách giữa hai select */
+  }
+  .full-width {
+    width: 130%;
+  }

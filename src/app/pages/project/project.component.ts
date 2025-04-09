@@ -19,7 +19,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
 import { AppTranslateService } from '../../services/translate.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -103,6 +103,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private dataService: DataService,
+    private translate: TranslateService
   ) {
     this.form = this.fb.group({
       startReceiveRequest: [null],
@@ -126,6 +127,9 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       typeSearch: [''],
       implement: [''],
       userFilter: [''],
+      projectName: [''],
+      categoryId: [''],
+      status: [''],
 
     });
 
@@ -153,7 +157,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         this.loadProject();
       } else {
         if ('from' in data) {
-          
+
           this.getCategory();
           this.loadProjectChartFromTo(data);
         } else {
@@ -165,7 +169,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
   async performSearch(searchValue: string) {
-    
+
     var val = {
       projectName: searchValue.toUpperCase(),
       categoryName: searchValue.toLocaleUpperCase()
@@ -426,7 +430,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   async loadProjectChartFromTo(chart: any) {
     // console.log(chart)
 
-    
+
     let total = Colors.TOTAL_PROJECTS;
     let remain = Colors.REMAIN_PROJECTS;
     let acceptance = Colors.ACCEPTANCE_PROJECTS;
@@ -442,7 +446,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       }
 
     } else if (chart.color === remain) {
-      
+
       var val = {
         type: 'remain',
         categoryName: chart.category,
@@ -557,8 +561,10 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   async getRecord(row: any) {
 
     const dataRow: any = await firstValueFrom(this.share.getProjectById(row.projectId));
+    console.log(dataRow.data)
     const dateImplement: any = await firstValueFrom(this.share.getImplementByProjectId(row.projectId));
     const result = dateImplement.data.join("\n");
+    // this.translate.onLangChange.subscribe(() => {
     this.form.patchValue(
       {
         startReceiveRequest: dataRow.data.startReceiveRequest,
@@ -578,14 +584,21 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         startPO: dataRow.data.startPO,
         endPO: dataRow.data.endPO,
         user: dataRow.data.pic?.uid.trim(),
-        implement: result
+        implement: result,
+        projectName: dataRow.data.projectName,
+        categoryId: dataRow.data.category.categoryId,
+
+
       }
 
-
+   
       // dataRow.data
-    );
+    ); 
+  //  })
+    console.log(this.form.value)
     this.selectedProjectId = row.projectId;
-    this.selectRow(row);
+    this.selectRow(row); 
+
   }
   clearData() {
     this.form.reset();
@@ -612,18 +625,20 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       startPO: this.convertToCustomFormat(this.form.value.startPO),
       endPO: this.convertToCustomFormat(this.form.value.endPO),
       projectId: this.selectedProjectId,
-      pic: this.form.value.user
+      pic: this.form.value.user,
+      projectName: this.form.value.projectName,
+      categoryId: this.form.value.categoryId,
     }
     // console.log(val.startDate)
     // console.log(val.endDate)
-    console.log(val)
+    // console.log(val)
     this.share.updateProject(val).subscribe((data: any) => {
 
       if (data.code === '200') {
         Swal.fire('update', 'update success', 'info')
       }
-      // this.loadProject();
-      // this.clearData();
+      this.loadProject();
+      this.clearData();
     })
   }
   async updateStatus(element: any, event: any) {
@@ -682,7 +697,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // Hàm lấy text theo trạng thái
   getStatusText(project: any): string {
-
     return project.status;
   }
   async confirmChange(data: any) {

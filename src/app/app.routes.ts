@@ -34,8 +34,8 @@ export const routes: Routes = [
     { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [AuthGuard] },
     { path: 'files', component: FileUploadComponent, canActivate: [AuthGuard] }, // Redirect mặc định
     { path: 'detail-report', component: DailyReportDetailComponent, canActivate: [AuthGuard] },
-    { path: '403', component: ForbiddenComponent }
-    // { path: 'calender', component: CalendarComponent}
+    { path: '403', component: ForbiddenComponent },
+    { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
 
 ];
 @NgModule({

@@ -423,7 +423,11 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
     }
   }
 
-
+  getCategoryName(id: number): string {
+    const cat = this.categories.find(c => c.categoryId === id);
+    return cat ? cat.categoryName : '';
+  }
+  
 
 
 }

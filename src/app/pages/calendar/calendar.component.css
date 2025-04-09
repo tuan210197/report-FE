@@ -1,34 +1,113 @@
 .full-calendar-container {
-    max-width: 80vw; /* Điều chỉnh kích thước nhỏ hơn */
-    margin: auto; /* Căn giữa */
-  }
-  .title{
-    text-align: center;
-  }
-  
-  .fc {
-    font-size: 14px; /* Giảm kích thước chữ */
-  }
-  
-  .fc-daygrid-day-number {
-    font-size: 12px !important; /* Giảm số ngày */
-  }
-  
+  max-width: 80vw;
+  /* Điều chỉnh kích thước nhỏ hơn */
+  margin: auto;
+  /* Căn giữa */
+}
 
-  /* Điều chỉnh chiều cao của các hàng trong lịch */
-.fc-daygrid-day {
-    min-height: 60px; /* Giảm chiều cao từng ô */
-    padding: 2px;
-  }
-  
-  /* Tùy chỉnh font chữ cho số ngày */
-  .fc-daygrid-day-number {
-    font-size: 12px !important;
-    padding: 2px;
-  }
-  
-  /* Điều chỉnh sự kiện hiển thị trong ô lịch */
-  .fc-event {
-    font-size: 10px !important;
-    padding: 2px 4px;
-  }
+.title {
+  text-align: center;
+}
+
+/* Đổi màu đường viền lưới thành đen */
+::ng-deep .fc-theme-standard td,
+.fc-theme-standard th {
+  border: 1px solid black !important;
+  /* Viền lưới màu đen */
+}
+
+/* Đổi màu nền header (nơi hiển thị thứ trong tuần) */
+::ng-deep .fc-theme-standard .fc-scrollgrid {
+  border: 1px solid black !important;
+}
+
+/* Màu nền cho tiêu đề ngày trong tuần */
+::ng-deep .fc-col-header-cell {
+
+  border: 1px solid black !important;
+
+  /* Chữ trắng để dễ đọc */
+}
+
+::ng-deep .fc-daygrid-day-frame.even-day {
+  background-color: #DFF6FF !important;
+  /* Màu nền cho thứ 2, 4, 6 */
+}
+
+::ng-deep .fc-daygrid-day-frame.odd-day {
+  background-color: #FFF5D1 !important;
+  /* Màu nền cho thứ 3, 5, 7 */
+}
+
+::ng-deep .fc-daygrid-day-frame.sunday-holiday {
+  background-color: #f3d7d7 !important;
+  /* Màu nền cho ngày Chủ nhật */
+}
+
+
+/* Thử thay đổi màu của số ngày */
+::ng-deep .fc-daygrid-day-frame.even-day .fc-daygrid-day-number {
+  color: #000000 !important;
+}
+
+::ng-deep .fc-daygrid-day-frame.odd-day .fc-daygrid-day-number {
+  color: #000000 !important;
+}
+
+::ng-deep .fc-daygrid-day-frame.sunday-holiday .fc-daygrid-day-number {
+  color: #000000 !important;
+}
+
+::ng-deep .fc-event-title {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+p .fc-daygrid-event {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Giới hạn tối đa 2 dòng */
+  line-clamp: 2;
+  /* Standard property for compatibility */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+::ng-deep .fc-custom-title {
+  font-size: 14px;
+  color: white;
+  text-align: center;
+  line-height: 1.2;
+}
+
+::ng-deep .fc .fc-daygrid-day-top {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  justify-content: center !important;
+  font-size: 30px !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+  padding-top: 0.5em;
+}
+
+::ng-deep .fc-daygrid-day-number {
+  text-decoration: none !important;
+}
+
+/* Xóa màu nền mặc định của event */
+::ng-deep .fc-event {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Xoá border radius nếu cần */
+::ng-deep .fc-event .fc-event-main {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  color: inherit; /* hoặc bạn tự chọn màu chữ */
+}

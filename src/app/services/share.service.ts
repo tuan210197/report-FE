@@ -10,8 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class ShareService {
 
-  private apiUrl = '/api';
-  // private apiUrl = 'http://10.81.160.29:8080/api'
+  // private apiUrl = '/api';
+  private apiUrl = 'http://10.81.160.29:8080/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -214,6 +214,19 @@ export class ShareService {
   }
   SearchFileByProject (projectId: any) {
     return this.http.get(this.apiUrl + '/files/get-by-project/'+projectId, { withCredentials: true });
+  }
+  /**calendar */
+  getCalendar(data:any) {
+    return this.http.post(this.apiUrl + '/calendar/get-all',data, { withCredentials: true });
+  }
+  getUserById(id: number) {
+    return this.http.get(this.apiUrl + '/calendar/get-user-by-id/' + id, { withCredentials: true });
+  }
+  updateCalendar(data: any) {
+    return this.http.post(this.apiUrl + '/calendar/update', data, { withCredentials: true });
+  }
+  importFile(data: any) {
+    return this.http.post(this.apiUrl + '/calendar/import', data, { withCredentials: true });
   }
 }
 
