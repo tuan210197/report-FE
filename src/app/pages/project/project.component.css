@@ -100,26 +100,15 @@ tr:hover {
 
 
 .status-btn {
-  padding: 8px 12px;
+  /* padding: 8px 12px; */
   border: none;
   border-radius: 5px;
-  font-weight: bold;
-  color: white;
+  /* font-weight: bold; */
+  /* color: white; */
   cursor: pointer;
   transition: 0.3s;
 }
 
-.btn-danger {
-  background-color: red;
-}
-
-.btn-success {
-  background-color: green;
-}
-
-.btn-warning {
-  background-color: orange;
-}
 
 .status-btn:hover {
   opacity: 0.8;
@@ -219,8 +208,7 @@ tr:hover {
 }
 .selected-row {
   background-color: #ADD8E6  !important; /* Màu xanh dương nhạt */
-  /* color: #264d46 ; */
-  /* font-weight: bold ; */
+
 }
 th.mat-sort-header-sorted {
   color: black;

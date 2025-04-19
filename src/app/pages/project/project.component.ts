@@ -27,7 +27,8 @@ import { DataService } from '../../services/data.service';
 import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Colors } from '../../common/color-chart';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 export interface table {
   projectName: string;
@@ -591,13 +592,13 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
       }
 
-   
+
       // dataRow.data
-    ); 
-  //  })
+    );
+    //  })
     console.log(this.form.value)
     this.selectedProjectId = row.projectId;
-    this.selectRow(row); 
+    this.selectRow(row);
 
   }
   clearData() {
@@ -637,8 +638,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       if (data.code === '200') {
         Swal.fire('update', 'update success', 'info')
       }
-      this.loadProject();
-      this.clearData();
+      // this.loadProject();
+      // this.clearData();
     })
   }
   async updateStatus(element: any, event: any) {
@@ -687,12 +688,12 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   getStatusClass(project: any): string {
 
     if (project.canceled) {
-      return 'btn-danger'; // Màu đỏ
+      return 'btn btn-danger'; // Màu đỏ
     }
     if (project.completed) {
-      return 'btn-success'; // Màu xanh
+      return 'btn btn-success'; // Màu xanh
     }
-    return 'btn-warning'; // Màu vàng
+    return 'btn btn-warning'; // Màu vàng
   }
 
   // Hàm lấy text theo trạng thái
@@ -794,7 +795,43 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dataService.setProjectId(projectId); // Gửi projectId đến service
     this.router.navigate(['/files']);
   }
+  exportExcel() {
+
+    const customHeaders = [
+      ['STT', 'Tên dự án', 'Người phụ trách', 'Loại hình dự án',
+        'Trạng thái', 'Ngày bắt đầu', 'Ngày kết thúc'
+      ]
+    ];
+    console.log(this.dataSource.filteredData)
+
+    const exportData = this.dataSource.filteredData.map((item: any, index) => [
+      index + 1,
+      item.projectName,
+      item.pic.fullName,
+      item.category.categoryName,
+      this.translate.instant(item.status),
+      item.startDate,
+      item.endDate
+    ]).filter(row => row.every(cell => cell !== undefined));
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([...customHeaders, ...exportData]);
+
+    // 4️⃣ Định dạng cột (Độ rộng)
+    worksheet['!cols'] = [
+      { wch: 10 },   // STT
+      { wch: 70 },  // Ngày báo cáo
+      { wch: 30 },  // Ngày báo cáo
+      { wch: 30 },  // Người báo cáo
+      { wch: 20 },  // Dự án
+      { wch: 20 },  // Loại công việc
+      { wch: 20 },  // Địa chỉ
+
+    ];
+
+    // 5️⃣ Xuất file Excel
+    const workbook: XLSX.WorkBook = { Sheets: { 'Báo cáo': worksheet }, SheetNames: ['Báo cáo'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    saveAs(dataBlob, 'Export project.xlsx');
+  }
 }
-
-
-

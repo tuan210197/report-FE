@@ -143,7 +143,7 @@
   </form>
 
   <div class="row">
-    <div class="col-md-3 ">
+    <div class="col-md-2 ">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{'filterName'|translate}}</mat-label>
         <mat-select [(ngModel)]="selectedName" (selectionChange)="applyFilter()">
@@ -154,7 +154,7 @@
 
     </div>
 
-    <div class="col-md-3 ">
+    <div class="col-md-2 ">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{'filterCategory'|translate }}</mat-label>
         <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilter()">
@@ -179,13 +179,15 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="button-container">
         <button type="button" class="btn btn-success" (click)="openDialog()"><mat-icon>add</mat-icon>
           {{'CREATE_PROJECT'| translate}} </button>
         <button type="button" class="btn btn-warning" (click)="update()"><mat-icon>edit</mat-icon>{{'UPDATE_PROJECT'|
           translate}}</button>
-        <button type="button" class="btn btn-primary" (click)="clearData()"><mat-icon>refresh</mat-icon> {{'CLEAR'|
+        <button type="button" class="btn btn-info" (click)="exportExcel()"><mat-icon>download</mat-icon> {{'EXPORT'|
+          translate}}</button>
+                  <button type="button" class="btn btn-secondary" (click)="clearData()"><mat-icon>refresh</mat-icon> {{'CLEAR'|
           translate}}</button>
       </div>
     </div>
