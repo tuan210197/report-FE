@@ -72,11 +72,12 @@ export class ImplementComponent {
 
   async getAll() {
     this.share.getImplementById(this.data).subscribe((data: any) => {
+      console.log(data);
       if (Array.isArray(data) && data.length > 0) {
         data.forEach(item => this.tableList.push({
-          projectName: item.projects.projectName,
-          category: item.projects.category.categoryName,
-          implementer: item.users.fullName,
+          projectName: item.projectName,
+          category: item.category,
+          implementer: item.fullName,
           date: item.createAt,
           implement: item.implement
         }))

@@ -112,5 +112,6 @@
     "address": "Địa chỉ",
     "implement": "Thực hiện công việc",
     "createdAt": "Thời gian báo cáo",
-    "calendar": "Lịch trực"
+    "calendar": "Lịch trực",
+    "location": "Địa điểm thi công"
 }

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ViewChild, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,12 +30,22 @@ interface dataTable {
   category: string;
   address: string;
   // progress: string;
+  startDate: string;
   quantityCompleted: number;
   quantityRemain: number;
   contractor: string;
-  create_at: string;
+  endDate: string;
   quantity: number;
   numberWorker: number;
+  implement: string;
+}
+
+export interface ProjectPage {
+  content: dataTable[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
 
 @Component({
@@ -63,8 +73,10 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
     'position', 'requester',
     'projectName', 'categoryName', 'address', 'quantity',
     'quantityCompleted', 'quantityRemain', 'contractor',
-     'numberWorker'];
+    'numberWorker'];
   dataSource = new MatTableDataSource<dataTable>([]);
+  // dataSource = new MatTableDataSource<dataTable>();
+  totalElements = 0;
   model: any;
   color = '#ADD8E6';
   translateService = inject(AppTranslateService);
@@ -86,15 +98,14 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       requester: ['', Validators.required], // Bắt buộc nhập
       address: ['', Validators.required], // Bắt buộc nhập
       projectId: ['', [Validators.required]], // Bắt buộc nhập
-      // progress: ['', [Validators.required, Validators.min(1), Validators.max(100)]], // Bắt buộc ngày bắt đầu
       quantity: ['', [Validators.required, Validators.min(1)]], // Phải lớn hơn 0
       categoryId: ['', Validators.required], // Bắt buộc chọn
       quantityCompleted: ['', [Validators.required, Validators.min(0)]], // Bắt buộc nhập
       quantityRemain: ['', [Validators.required, Validators.min(0)]],
       contractor: ['', Validators.required],
       numberWorker: ['', [Validators.required, Validators.min(0)]], // Không được âm
-      startDate: [''],
-      endDate: [''],
+      startDate: ['', [Validators.required]],
+      endDate: ['', [Validators.required]],
       implement: ['', [Validators.required]],
       exportDate: [''],
       search: [''],
@@ -106,8 +117,8 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.getProjectByUserId();
     this.getCategory();
-    this.getAllDailyReport();
-    this.dataSource.paginator = this.paginator;
+    this.getAllDailyReport(0, 5);
+    // this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit(): void {
@@ -129,6 +140,7 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       });
   }
   checkFormErrors(formGroup: FormGroup): boolean {
+    debugger
     let isValid = true;
     Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
@@ -170,26 +182,33 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       });
   }
 
-  async getAllDailyReport() {
+  async getAllDailyReport(pageIndex: number, pageSize: number) {
     this.listData = []
-    const list = await firstValueFrom(this.share.getDailyReport()) as dataTable[];
-    // console.log(list);
-    list.forEach((item: dataTable) => this.listData.push({
+    const list: any = await firstValueFrom(this.share.getDailyReport(pageIndex, pageSize)) as dataTable[];
+    // console.log(list.data.content);
+    list.data.content.forEach((item: dataTable) => this.listData.push({
       reportId: item.reportId,
       user: item.user,
       requester: item.requester,
       project: item.project,
       category: item.category,
-      address: item.address,
-      // progress: item.progress,
+      address: item.address.toUpperCase(),
+      startDate: item.startDate,
+      endDate: item.endDate,
       quantityCompleted: item.quantityCompleted,
       quantityRemain: item.quantityRemain,
       contractor: item.contractor,
-      create_at: item.create_at,
       quantity: item.quantity,
       numberWorker: item.numberWorker,
+      implement: item.implement,
     }));
+    this.totalElements = list.data.totalElements;
+
     this.dataSource.data = this.listData;
+  }
+
+  onPageChange(event: PageEvent) {
+    this.getAllDailyReport(event.pageIndex, event.pageSize);
   }
   onSubmit() {
     if (this.checkFormErrors(this.form)) {
@@ -197,7 +216,6 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
         requester: this.form.value.requester,
         address: this.form.value.address,
         projectId: this.form.value.projectId,
-        // progress: this.form.value.progress,
         quantity: this.form.value.quantity,
         categoryId: this.form.value.categoryId,
         quantityCompleted: this.form.value.quantityCompleted,
@@ -207,20 +225,18 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
         startDate: this.convertToCustomFormatDate(this.form.value.startDate),
         endDate: this.convertToCustomFormatDate(this.form.value.endDate),
         implement: this.form.value.implement,
-
       }
-      console.log(val);
       this.share.addNewDailyReport(val).subscribe((data: any) => {
-        this.getAllDailyReport();
+        // this.getAllDailyReport(0,5);
         if (data.code === '200') {
           Swal.fire('Success', 'Tạo Báo Cáo Thành Công </br> 建立成功報告', 'info')
         }
       });
     } else {
-      // console.log("Form invalid");
+      this.share.getCurrentUser().subscribe((user: any) => {
+        Swal.fire(user.fullName, 'Muốn nộp báo cáo thành công thì khôn hồn nhập đủ các ô đang báo đỏ kia đi nhé <br> <br>Trân trọng! <br> Thu Hoài xinh gái', 'warning');
+      })
     }
-
-
   }
   convertToCustomFormat(dateString: string): string | null {
     // Kiểm tra đầu vào có hợp lệ không
@@ -280,14 +296,14 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
           address: report.data.address, // Bắt buộc nhập
           projectId: report.data.project.projectId, // Bắt buộc nhập
           progress: report.data.progress, // Bắt buộc ngày bắt đầu
-          quantity: report.data.quantity, // Phải lớn hơn 0
+          // quantity: report.data.quantity, // Phải lớn hơn 0
           categoryId: report.data.category.categoryId, // Bắt buộc chọn
-          quantityCompleted: report.data.quantityCompleted, // Bắt buộc nhập
-          quantityRemain: report.data.quantityRemain, // Bắt buộc nhập
+          // quantityCompleted: report.data.quantityCompleted, // Bắt buộc nhập
+          // quantityRemain: report.data.quantityRemain, // Bắt buộc nhập
           contractor: report.data.contractor, // Bắt buộc nhập
           numberWorker: report.data.numberWorker, // Bắt buộc nhập
           startDate: report.data.startDate, // Bắt buộc nhập
-          endDate: report.data.endDate, // Bắt buộc nhập
+          // endDate: report.data.endDate, // Bắt buộc nhập
           implement: report.data.implement, // Bắt buộc nhập
         }
       );
@@ -329,29 +345,29 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
     var val = {
       keyword: this.form.value.search.toUpperCase()
     }
-    console.log(val);
+    // console.log(val);
     this.share.seardchDailyReport(val).subscribe((data: any) => {
       this.dataSource.data = [];
       this.dataSource.data = data.data;
     });
   }
-  showDetail(data:any){
-    console.log(data);
+  showDetail(data: any) {
+    // console.log(data);
   }
   async exportToExcel() {
     var val = {
       date: this.convertToCustomFormatDate(this.form.value.exportDate)
     }
-    const data: any = await firstValueFrom(this.share.getExportDailyReport(val));
+
     if (this.convertToCustomFormatDate(this.form.value.exportDate) !== null) {
+      const data: any = await firstValueFrom(this.share.getExportDailyReport(val));
+      // console.log(data);
       this.generateExcel(data);
-      // this.exportToPptx(data);
     } else {
-
       const date: any = await firstValueFrom(this.share.getMaxDateExport());
-
+      console.log(date);
       var val2 = {
-        date: date.data
+        date: this.convertToCustomFormatDate(date.data)
       }
       const data: any = await firstValueFrom(this.share.getExportDailyReport(val2));
       this.generateExcel(data);
@@ -365,7 +381,7 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
       ['序号', '需求用户', '项目名称',
         '项目类型', '工作地点', '已完成', '未完成', '供应商',
         '数量', '人工数量',
-        '结束日期', '每日工作报告','负责人'
+        '结束日期', '每日工作报告', '负责人'
       ]
     ];
     // 2️⃣ Chuyển đổi dữ liệu thành định dạng mảng theo đúng thứ tự cột
@@ -427,7 +443,27 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
     const cat = this.categories.find(c => c.categoryId === id);
     return cat ? cat.categoryName : '';
   }
-  
+  getDetail(data: any) {
+    this.form.reset(); // Reset form trước khi cập nhật giá trị mới
+    this.form.patchValue(
+      {
+        requester: data.requester, // Bắt buộc nhập
+        address: data.address, // Bắt buộc nhập
+        progress: data.progress, // Bắt buộc ngày bắt đầu
+        // quantity: data.quantity, // Phải lớn hơn 0
+        categoryId: data.category.categoryId, // Bắt buộc chọn
+          // quantityCompleted: data.quantityCompleted, // Bắt buộc nhập
+          // quantityRemain: data.quantityRemain, // Bắt buộc nhập
+        contractor: data.contractor, // Bắt buộc nhập
+        numberWorker: data.numberWorker, // Bắt buộc nhập
+        startDate: this.convertToCustomFormatDate(data.startDate), // Bắt buộc nhập
+        // endDate: this.convertToCustomFormatDate(data.endDate), // Bắt buộc nhập
+        implement: data.implement, // Bắt buộc nhập 
+      });
+
+    this.searchControl.setValue(data.project.projectName);
+
+  }
 
 
 }

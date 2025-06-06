@@ -1,22 +1,46 @@
-  <h2 class="title">
-    {{'control' | translate}}
-  </h2>
-<div class="year">
+<h2 class="title">
+  {{'control' | translate}}
+</h2>
+<!-- <div class="date">
+      <mat-form-field appearance="fill">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker2" #rangeInput>
+          <input matStartDate placeholder="Start date">
+          <input matEndDate placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker2></mat-date-range-picker>
+      </mat-form-field>
+      
+      <button type="button" class="btn btn-primary" (click)="searchByDate()">
+        <mat-icon>search</mat-icon>{{'search'|translate}}
+      </button>
+      
+
+  </div> -->
+<div class="splitdate">
+  <app-date-range class="dateRangeChange" (dateRangeChange)="onRangeChange($event)"></app-date-range>
+
+  <div class="year">
+
     <mat-form-field appearance="outline" class="col-md-2">
       <mat-label>{{'from'|translate}}</mat-label>
       <input matInput [matDatepicker]="fromPicker" [formControl]="fromYear">
       <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
-      <mat-datepicker #fromPicker startView="multi-year" (yearSelected)="setFromYear($event, fromPicker)" panelClass="year-picker">
+      <mat-datepicker #fromPicker startView="multi-year" (yearSelected)="setFromYear($event, fromPicker)"
+        panelClass="year-picker">
       </mat-datepicker>
     </mat-form-field>
-  
+
     <mat-form-field appearance="outline" class="col-md-2">
       <mat-label>{{'to'| translate}}</mat-label>
-      <input matInput [matDatepicker]="toPicker"  [formControl]="toYear" >
+      <input matInput [matDatepicker]="toPicker" [formControl]="toYear">
       <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
       <mat-datepicker #toPicker startView="multi-year" (yearSelected)="setToYear($event, toPicker)"></mat-datepicker>
     </mat-form-field>
-  <button type="button" class="btn btn-primary" (click)="searchFromTo()"> <mat-icon>search</mat-icon>{{'search'|translate}}</button>
+    <button type="button" class="btn btn-primary" (click)="searchFromTo()">
+      <mat-icon>search</mat-icon>{{'search'|translate}}</button>
+  </div>
 </div>
 <div class="container-fluid">
 

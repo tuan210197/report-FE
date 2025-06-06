@@ -12,8 +12,9 @@ export class ShareService {
 
   // private apiUrl = '/api';
   private apiUrl = 'http://10.81.160.29:8080/api'
+  constructor(private http: HttpClient, private router: Router) {
 
-  constructor(private http: HttpClient, private router: Router) { }
+   }
 
   private handleError(error: HttpErrorResponse) {
     // Xử lý lỗi và trả về thông báo lỗi cho frontend
@@ -57,6 +58,10 @@ export class ShareService {
   getChartFromTo(data: any) {
     return this.http.post(this.apiUrl + "/project/dashboard-from-to", data, { withCredentials: true });
   }
+
+  getChartFromDateToDate(data: any) {
+    return this.http.post(this.apiUrl + "/project/dashboard-from-date-to-date", data, { withCredentials: true });
+  }
   /* Start Project*/
   getProject() {
     return this.http.get(this.apiUrl + '/project/get-by-userid', { withCredentials: true });
@@ -67,12 +72,18 @@ export class ShareService {
   getProjectChartFromTo(data: any) {
     return this.http.post(this.apiUrl + '/project/search-chart-from-to', data, { withCredentials: true });
   }
+  getProjectChartFromDateToDate(data: any) {
+    return this.http.post(this.apiUrl + '/project/search-chart-from-date-to-date', data, { withCredentials: true });
+  }
   getCompletedProject() {
     return this.http.get(this.apiUrl + '/project/get-completed2', { withCredentials: true });
   }
 
   getCompletedProjectFromTo(data: any) {
     return this.http.post(this.apiUrl + '/project/get-from-to', data, { withCredentials: true });
+  }
+  getCompletedProjectFromDateToDate(data: any) {
+    return this.http.post(this.apiUrl + '/project/get-from-date-to-date', data, { withCredentials: true });
   }
   getProjectName() {
     return this.http.get(this.apiUrl + '/project/get-project-name', { withCredentials: true });
@@ -87,9 +98,9 @@ export class ShareService {
     return this.http.post(this.apiUrl + '/project/add', data, { withCredentials: true });
   }
 
-  addSubMember(data: any) {
-    return this.http.post(this.apiUrl + '/sub-member/add', data, { withCredentials: true });
-  }
+  // addSubMember(data: any) {
+  //   return this.http.post(this.apiUrl + '/sub-member/add', data, { withCredentials: true });
+  // }
   getProjectById(id: number) {
     return this.http.get(this.apiUrl + '/project/' + id, { withCredentials: true });
   }
@@ -117,7 +128,6 @@ export class ShareService {
   /* End Project*/
 
   /*start category */
-
   getCategory() {
     return this.http.get(this.apiUrl + '/cate/get-all', { withCredentials: true });
   }
@@ -135,8 +145,9 @@ export class ShareService {
   addNewDailyReport(data: any) {
     return this.http.post(this.apiUrl + '/daily-report/add', data, { withCredentials: true });
   }
-  getDailyReport() {
-    return this.http.get(this.apiUrl + '/daily-report/find-by-uuid', { withCredentials: true });
+  getDailyReport(page: number, size: number) {
+    return this.http.get(this.apiUrl + '/daily-report/find-by-uuid?page=' + page + '&size=' + size, { withCredentials: true });
+    // return this.http.get(this.apiUrl + '/daily-report/find-by-uuid', { withCredentials: true });
   }
   getDailyReportByProjecetId(data: any) {
     return this.http.post(this.apiUrl + '/daily-report/get-by-project', data, { withCredentials: true });
@@ -155,9 +166,9 @@ export class ShareService {
   /*end daily report */
   /*implement */
 
-  getAllImplement() {
-    return this.http.get(this.apiUrl + '/implement/get-all', { withCredentials: true });
-  }
+  // getAllImplement() {
+  //   return this.http.get(this.apiUrl + '/implement/get-all', { withCredentials: true });
+  // }
   getImplementById(id: number) {
     return this.http.get(this.apiUrl + '/implement/get/' + id, { withCredentials: true });
   }

@@ -1,0 +1,14 @@
+<mat-form-field appearance="outline">
+    <mat-label>Enter a date range</mat-label>
+    <mat-date-range-input [rangePicker]="picker" #rangeInput="matDateRangeInput">
+        <!-- Khi người dùng chọn ngày, gọi onDateChange() -->
+        <input matStartDate placeholder="Start date" >
+        <input matEndDate placeholder="End date" >
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+</mat-form-field>
+<!-- Nút để lấy ngày -->
+<button type="button" class="btn btn-primary" (click)="getSelectedDateRange()">
+     Get Date Range
+  </button>

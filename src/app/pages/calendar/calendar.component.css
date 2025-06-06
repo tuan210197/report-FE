@@ -56,7 +56,7 @@
 
 ::ng-deep .fc-daygrid-day-frame.sunday-holiday .fc-daygrid-day-number {
   color: #000000 !important;
-}
+} 
 
 ::ng-deep .fc-event-title {
   white-space: normal !important;

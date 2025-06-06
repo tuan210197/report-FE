@@ -70,14 +70,18 @@ export class DailyReportDetailComponent implements AfterViewInit {
 
   async search() {
     this.isLoading = true;
-    this.tableList = [];
+    this.tableList = []; // Reset ngay khi click nút
+
     if (!this.form.value.date) {
       this.form.patchValue({ date: new Date() });
     }
     const val = { date: this.convertToCustomFormatDateTime(this.form.value.date) };
 
     const list: any = await firstValueFrom(this.share.getDetailDailyReport(val));
+
     if (Array.isArray(list.data) && list.data.length > 0) {
+    this.tableList = [];
+
       for (const item of list.data) {
         const translatedImplement = await this.freeGoogleTranslate(this.formatText(item.implement));
         this.tableList.push({
@@ -100,6 +104,7 @@ export class DailyReportDetailComponent implements AfterViewInit {
       Swal.fire('NO_DATA', '', 'info');
     }
     this.dataSource.data = this.tableList;
+    console.log(this.tableList);
   }
 
   convertToCustomFormat(dateString: string): string | null {
@@ -162,6 +167,7 @@ export class DailyReportDetailComponent implements AfterViewInit {
     }
   }
 
+  
 }
 
 

@@ -60,26 +60,26 @@ export class AddProjectComponent implements OnInit {
   selectedUser: string | null = null;
 
   form: FormGroup;
-  constructor(private fb: FormBuilder, private share: ShareService, 
+  constructor(private fb: FormBuilder, private share: ShareService,
     private dialogRef: MatDialogRef<AddProjectComponent> // Tham chiếu đến dialog
   ) {
     this.form = this.fb.group({
       projectName: [''],
-      submember: [''],
+      pic: [''],
       description: [''],
       categoryId: [],
-      startDate: []
+      startDate: [],
+      location: [''],
     });
   }
   translateService = inject(AppTranslateService);
 
-  switchLanguage() {
-    this.translateService.switchLanguage();
-  }
+  // switchLanguage() {
+  //   this.translateService.switchLanguage();
+  // }
   getCategory() {
     this.share.getCategory().subscribe((data: any) => {
       this.categories = data; // Gán dữ liệu vào mảng categories
-      console.log(data);
     },
       (error) => {
         console.error('Lỗi khi tải danh mục:', error);
@@ -90,7 +90,6 @@ export class AddProjectComponent implements OnInit {
   getStaff() {
     this.share.getStaff().subscribe((data: any) => {
       this.users = data;
-      console.log(data)
     }, (error) => {
       console.error('lỗi khi load staff', error);
     })
@@ -101,50 +100,28 @@ export class AddProjectComponent implements OnInit {
       categoryId: this.form.value.categoryId,
       startDate: this.convertToCustomFormat(this.form.value.startDate),
       description: this.form.value.description,
-      submembers: this.form.value.submember,
       year: this.form.value.startDate.getFullYear(),
+      location: this.form.value.location,
+      pic: this.form.value.pic.uid,
     }
-    console.log(val);
+ 
     this.share.addProject(val).subscribe(async (data: any) => {
       if (data != null) {
-        try {
-          // Duyệt qua từng submember và thực hiện addSubMember
-          if (val.submembers !== '') {
-            const subMemberPromises = val.submembers.map((submember: any) => {
-              const val2 = {
-                projectName: this.form.value.projectName,
-                projectId: data.data,
-                user: submember.uid,
-              };
-              console.log(val2);
-
-              // Trả về Observable được chuyển thành Promise
-              return firstValueFrom(this.share.addSubMember(val2));
-            });
-
-            // Chờ tất cả các lời hứa (Promises) hoàn thành
-            await Promise.all(subMemberPromises);
+        // Hiển thị thông báo sau khi tất cả các API thành công
+        Swal.fire({
+          title: 'Thành công',
+          text: 'Dự án và thành viên đã được thêm thành công.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Hành động sau khi người dùng nhấn "OK"
+            this.dialogRef.close(true); // Bạn có thể truyền dữ liệu gì đó về dialog cha nếu cần
           }
-          // Hiển thị thông báo sau khi tất cả các API thành công
-          Swal.fire({
-            title: 'Thành công',
-            text: 'Dự án và thành viên đã được thêm thành công.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Hành động sau khi người dùng nhấn "OK"
-              this.dialogRef.close(true); // Bạn có thể truyền dữ liệu gì đó về dialog cha nếu cần
-            }
-          });
-        } catch (error) {
-          console.error('Có lỗi xảy ra khi thêm thành viên:', error);
-          Swal.fire('Lỗi', 'Không thể thêm thành viên. Vui lòng thử lại.', 'error');
-        }
+        });
       }
-    });
-
-  }
+    })
+  };
 
   convertToCustomFormat(dateString: string): string | null {
     // Kiểm tra đầu vào có hợp lệ không

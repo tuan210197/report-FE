@@ -9,7 +9,7 @@
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-        <button (click)="search()" class="btn btn-primary">搜索</button>
+        <button (click)="search()" [disabled]="isLoading" class="btn btn-primary">{{'search'|translate}}</button>
     </form>
 
     <div class="mat-elevation-z8">

@@ -41,6 +41,7 @@ export interface table {
   startDate: string;
   endDate: string;
   status: string;
+  location: string;
 }
 
 @Component({
@@ -72,7 +73,7 @@ export interface table {
 })
 export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   tableList: table[] = [];
-  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'document', 'status', 'startDate', 'endDate', 'actions', 'delete'];
+  displayedColumns: string[] = ['position', 'projectName', 'pic', 'category', 'location', 'document', 'status', 'startDate', 'endDate', 'actions', 'delete'];
   dataSource = new MatTableDataSource<table>(this.tableList);
   model: any;
   color = '#ADD8E6';
@@ -131,6 +132,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       projectName: [''],
       categoryId: [''],
       status: [''],
+      location: [''],
 
     });
 
@@ -139,6 +141,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
 
   ngOnInit() {
+    // this.formatDate('Wed Jan 01 2025');
     this.getAllStatus();
     this.form.get('inputText')?.valueChanges.pipe(
       debounceTime(this.debounceTimeMs)
@@ -151,19 +154,17 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     );
     this.dataService.currentData.subscribe((data) => {
-      // console.log(data)
       this.getStaff();
+      this.getCategory();
       if (data === null) {
-        this.getCategory();
         this.loadProject();
       } else {
-        if ('from' in data) {
-
-          this.getCategory();
+        if (typeof data.from === 'number') {
           this.loadProjectChartFromTo(data);
-        } else {
-
-          this.getCategory();
+        } else if (typeof data.from === 'string') {
+          this.loadProjectChartFromDateToDate(data);
+        }
+        else {
           this.loadProjectChart(data);
         }
       }
@@ -189,7 +190,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         canceled: item.canceled,
         startDate: item.startDate,
         endDate: item.endDate,
-        status: item.status.statusId
+        status: item.status.statusId,
+        location: item.location
       }))
     }
 
@@ -312,7 +314,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   async loadProject() {
     this.tableList = [];
     const data = await firstValueFrom(this.share.getProject());
-    // console.log(data)
     if (Array.isArray(data) && data.length > 0) {
       data.forEach(item => this.tableList.push({
         projectName: item.projectName,
@@ -324,7 +325,8 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         canceled: item.canceled,
         startDate: item.startDate,
         endDate: item.endDate,
-        status: item.status.statusId
+        status: item.status.statusId,
+        location: item.location
       }))
     }
 
@@ -332,7 +334,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async loadProjectChart(chart: any) {
-    // console.log(chart)
+    debugger
     let total = Colors.TOTAL_PROJECTS;
     let remain = Colors.REMAIN_PROJECTS;
     let acceptance = Colors.ACCEPTANCE_PROJECTS;
@@ -397,7 +399,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
       }
     }
-    // console.log(val)
+    console.log(val)
     this.tableList = [];
     const data: any = await firstValueFrom(this.share.getProjectChart(val));
 
@@ -413,6 +415,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         startDate: string;
         endDate: string;
         status: { statusId: string };
+        location: string;
       }) => this.tableList.push({
         projectName: item.projectName,
         category: item.category,
@@ -423,14 +426,14 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         canceled: item.canceled,
         startDate: item.startDate,
         endDate: item.endDate,
-        status: item.status.statusId
+        status: item.status.statusId,
+        location: item.location
       }));
     }
     this.dataSource.data = this.tableList;
   }
   async loadProjectChartFromTo(chart: any) {
-    // console.log(chart)
-
+    console.log(chart)
 
     let total = Colors.TOTAL_PROJECTS;
     let remain = Colors.REMAIN_PROJECTS;
@@ -447,7 +450,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       }
 
     } else if (chart.color === remain) {
-
+      debugger;
       var val = {
         type: 'remain',
         categoryName: chart.category,
@@ -534,6 +537,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         startDate: string;
         endDate: string;
         status: { statusId: string };
+        location: string;
       }) => this.tableList.push({
         projectName: item.projectName,
         category: item.category,
@@ -544,7 +548,130 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         canceled: item.canceled,
         startDate: item.startDate,
         endDate: item.endDate,
-        status: item.status.statusId
+        status: item.status.statusId,
+        location: item.location
+      }));
+    }
+    this.dataSource.data = this.tableList;
+  }
+  async loadProjectChartFromDateToDate(chart: any) {
+    let total = Colors.TOTAL_PROJECTS;
+    let remain = Colors.REMAIN_PROJECTS;
+    let acceptance = Colors.ACCEPTANCE_PROJECTS;
+    let completed = Colors.COMPLETED_PROJECTS;
+    let cancelled = Colors.CANCELED_PROJECTS;
+    if (chart.color === completed) {
+      var val = {
+        type: 'completed',
+        categoryName: chart.category,
+        from: this.formatDate(chart.from),
+        to: this.formatDate(chart.to),
+        status: chart.id
+      }
+
+    } else if (chart.color === remain) {
+
+      var val = {
+        type: 'remain',
+        categoryName: chart.category,
+        from: this.formatDate(chart.from),
+        to: this.formatDate(chart.to),
+        status: chart.id
+      }
+
+    } else if (chart.color === cancelled) {
+      var val = {
+        type: 'cancelled',
+        categoryName: chart.category,
+        from: this.formatDate(chart.from),
+        to: this.formatDate(chart.to),
+        status: chart.id
+      }
+
+    }
+
+    else if (chart.color === acceptance) {
+      var val = {
+        type: 'acceptance',
+        categoryName: chart.category,
+        from: this.formatDate(chart.from),
+        to: this.formatDate(chart.to),
+        status: chart.id
+      }
+    }
+    else {
+      if (chart.isCompleted === 'Completed') {
+        var val: { type: string; categoryName: any; from: string; to: string; status: any } = {
+          type: 'completedTotal',
+          categoryName: chart.category,
+          from: this.formatDate(chart.from),
+          to: this.formatDate(chart.to),
+          status: 'completed'
+        }
+
+      }
+      else if (chart.isCompleted === 'In Progress') {
+        var val: { type: string; categoryName: any; from: string; to: string; status: any } = {
+          type: 'remainTotal',
+          categoryName: chart.category,
+          from: this.formatDate(chart.from),
+          to: this.formatDate(chart.to),
+          status: chart.id
+        }
+
+
+      }
+      else if (chart.isCompleted === 'Acceptance') {
+        var val: { type: string; categoryName: any; from: string; to: string; status: any } = {
+          type: 'acceptanceTotal',
+          categoryName: chart.category,
+          from: this.formatDate(chart.from),
+          to: this.formatDate(chart.to),
+          status: chart.id
+        }
+      }
+      else {
+        var val: { type: string; categoryName: any; from: string; to: string; status: any } = {
+          type: 'cancelledTotal',
+          categoryName: chart.category,
+          from: chart.from,
+          to: chart.to,
+          status: 'cancelled'
+        }
+
+      }
+    }
+
+    this.tableList = [];
+    console.log(val)
+    debugger
+    const data: any = await firstValueFrom(this.share.getProjectChartFromDateToDate(val));
+    // const data: any = null;
+    if (Array.isArray(data.data) && data.data.length > 0) {
+      data.data.forEach((item: {
+        projectName: string;
+        category: string;
+        pic: string;
+        description: string;
+        projectId: number;
+        completed: boolean;
+        canceled: boolean;
+        startDate: string;
+        endDate: string;
+        status: { statusId: string };
+        location: string;
+      }) => this.tableList.push({
+        projectName: item.projectName,
+        category: item.category,
+        pic: item.pic,
+        description: item.description,
+        projectId: item.projectId,
+        completed: item.completed,
+        canceled: item.canceled,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        status: item.status.statusId,
+        location: item.location
       }));
     }
     this.dataSource.data = this.tableList;
@@ -562,9 +689,9 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   async getRecord(row: any) {
 
     const dataRow: any = await firstValueFrom(this.share.getProjectById(row.projectId));
-    console.log(dataRow.data)
     const dateImplement: any = await firstValueFrom(this.share.getImplementByProjectId(row.projectId));
-    const result = dateImplement.data.join("\n");
+    // const result = dateImplement.data.join("\n");
+    console.log(dateImplement.data)
     // this.translate.onLangChange.subscribe(() => {
     this.form.patchValue(
       {
@@ -585,9 +712,10 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
         startPO: dataRow.data.startPO,
         endPO: dataRow.data.endPO,
         user: dataRow.data.pic?.uid.trim(),
-        implement: result,
+        implement: dateImplement.data,
         projectName: dataRow.data.projectName,
         categoryId: dataRow.data.category.categoryId,
+        location: dataRow.data.location,
 
 
       }
@@ -596,7 +724,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       // dataRow.data
     );
     //  })
-    console.log(this.form.value)
     this.selectedProjectId = row.projectId;
     this.selectRow(row);
 
@@ -629,10 +756,9 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       pic: this.form.value.user,
       projectName: this.form.value.projectName,
       categoryId: this.form.value.categoryId,
+      location: this.form.value.location,
     }
-    // console.log(val.startDate)
-    // console.log(val.endDate)
-    // console.log(val)
+
     this.share.updateProject(val).subscribe((data: any) => {
 
       if (data.code === '200') {
@@ -682,8 +808,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   onSearch() {
     this.searchSubject.next(this.inputText);
   }
-
-
   // Hàm lấy class theo trạng thái
   getStatusClass(project: any): string {
 
@@ -695,7 +819,6 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     return 'btn btn-warning'; // Màu vàng
   }
-
   // Hàm lấy text theo trạng thái
   getStatusText(project: any): string {
     return project.status;
@@ -798,7 +921,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   exportExcel() {
 
     const customHeaders = [
-      ['STT', 'Tên dự án', 'Người phụ trách', 'Loại hình dự án',
+      ['STT', 'Tên dự án', 'Người phụ trách', 'Loại hình dự án', 'Địa điểm thi công',
         'Trạng thái', 'Ngày bắt đầu', 'Ngày kết thúc'
       ]
     ];
@@ -809,6 +932,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       item.projectName,
       item.pic.fullName,
       item.category.categoryName,
+      item.location,
       this.translate.instant(item.status),
       item.startDate,
       item.endDate
@@ -820,6 +944,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       { wch: 10 },   // STT
       { wch: 70 },  // Ngày báo cáo
       { wch: 30 },  // Ngày báo cáo
+      { wch: 30 },  // Người báo cáo
       { wch: 30 },  // Người báo cáo
       { wch: 20 },  // Dự án
       { wch: 20 },  // Loại công việc
@@ -834,4 +959,15 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
     saveAs(dataBlob, 'Export project.xlsx');
   }
+  formatDate(date: any): string {
+    const dateCheck = new Date(date)
+    // Lấy các phần tử năm, tháng, ngày
+    const year = dateCheck.getFullYear();
+    const month = String(dateCheck.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = String(dateCheck.getDate()).padStart(2, '0');
+    // Kết hợp lại thành yyyymmdd
+    console.log(`${year}-${month}-${day}`)
+    return `${year}-${month}-${day}`;
+  }
+
 }

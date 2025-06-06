@@ -1,31 +1,13 @@
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 20px;
-  box-sizing: border-box;
-}
+
 
 .mySelectClass {
   padding-top: 2px;
 }
 
 .myPanelClass {
-  /* margin: 25px 0px; */
   width: 200px;
 }
-.container-fluid {
-  text-align: center;
-  height: 100%;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
-  padding-bottom: 30px;
-}
+
 .row {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -37,4 +19,50 @@
 }
 .full-width {
   width: 100%;
+}
+
+.container-fluid {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.mat-form-field {
+  margin-bottom: 20px;
+}
+
+textarea {
+  min-height: 120px;
+}
+
+.btn {
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+.btn-danger {
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #d32f2f;
+}
+
+.clearfix {
+  clear: both;
+  margin-top: 30px;
 }

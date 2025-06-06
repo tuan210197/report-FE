@@ -8,10 +8,8 @@
   </div>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-grid-list cols="4" class="row" rowHeight="100px">
-
       <mat-grid-tile>
-
-        <mat-form-field class="full-width" appearance="outline" >
+        <mat-form-field class="full-width" appearance="outline">
           <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
           <input type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto">
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectionChange($event)">
@@ -20,11 +18,9 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-
-
       </mat-grid-tile>
       <mat-grid-tile>
-        <mat-form-field class="full-width" appearance="outline" >
+        <mat-form-field class="full-width" appearance="outline">
           <mat-label>{{'REQUESTER' | translate}}</mat-label>
           <input matInput formControlName="requester">
         </mat-form-field>
@@ -48,9 +44,9 @@
     <mat-grid-list cols="4" class="row" rowHeight="100px">
       <!-- Project Name -->
       <mat-grid-tile>
-        <mat-form-field class="full-width" appearance="outline" >
+        <mat-form-field class="full-width" appearance="outline">
           <mat-label>{{ 'CATEGORY' | translate }}</mat-label>
-          <mat-select formControlName="categoryId" >
+          <mat-select formControlName="categoryId">
             <mat-option *ngFor="let category of categories" [value]="category.categoryId">
               {{ category.categoryName }}
             </mat-option>
@@ -132,17 +128,17 @@
       </mat-grid-tile>
 
       <mat-grid-tile>
-        <mat-form-field class="full-width" appearance="outline" >
+        <mat-form-field class="full-width" appearance="outline">
           <mat-label>{{ 'search' | translate }}</mat-label>
           <input matInput formControlName="search" type="text">
         </mat-form-field>
-
       </mat-grid-tile>
 
       <!-- Cột 3: Chứa nút bấm (chiếm 1/4 hàng) -->
       <mat-grid-tile colspan="1">
         <div class="button-container">
-          <button type="button" class="btn btn-success" type="button" (click)="searchReport()"> {{'search'|translate}}</button>
+          <button type="button" class="btn btn-success" type="button" (click)="searchReport()">
+            {{'search'|translate}}</button>
         </div>
         <div class="button-container">
           <button type="button" class="btn btn-success" type="submit"> {{'CREATE'|translate}}</button>
@@ -158,22 +154,22 @@
 
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource">
-
       <!-- Position Column -->
       <ng-container matColumnDef="position">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'STT' | translate}}</th>
-        <td mat-cell *matCellDef="let element; let i = index" (click)="showDetail(element)">
+        <td mat-cell *matCellDef="let element; let i = index" (click)="showDetail(element)"
+          (click)="getDetail(element)">
           {{ i + 1+ paginator.pageIndex * paginator.pageSize }}
         </td>
       </ng-container>
       <!-- Name Column -->
       <ng-container matColumnDef="requester">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color">{{'BEN_YEU_CAU' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.requester}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.requester}} </td>
       </ng-container>
       <ng-container matColumnDef="address">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'DIA_DIEM_THI_CONG' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.address}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.address}} </td>
       </ng-container>
       <!-- <ng-container matColumnDef="userName">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'NGUOI_BAO_CAO' | translate}}</th>
@@ -183,24 +179,24 @@
       <!-- Symbol Column -->
       <ng-container matColumnDef="projectName">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'TEN_DU_AN' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.project.projectName}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.project.projectName}} </td>
       </ng-container>
       <ng-container matColumnDef="quantity">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'SO_LUONG' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.quantity}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.quantity}} </td>
       </ng-container>
       <!-- Weight Column -->
       <ng-container matColumnDef="categoryName">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'LOAI_HINH_DU_AN' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.category.categoryName}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.category.categoryName}} </td>
       </ng-container>
       <ng-container matColumnDef="quantityCompleted">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color">{{'DA_HOAN_THANH' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.quantityCompleted}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.quantityCompleted}} </td>
       </ng-container>
       <ng-container matColumnDef="quantityRemain">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'CON_LAI' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.quantityRemain}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.quantityRemain}} </td>
       </ng-container>
       <!-- <ng-container matColumnDef="progress">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'TIEN_DO_DU_AN' | translate}}</th>
@@ -210,13 +206,13 @@
 
       <ng-container matColumnDef="contractor">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'NHA_THAU' | translate}}</th>
-        <td mat-cell *matCellDef="let element"> {{element.contractor}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.contractor}} </td>
       </ng-container>
 
       <ng-container matColumnDef="numberWorker">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'SO_LUONG_CONG_NHAN' | translate}}
         </th>
-        <td mat-cell *matCellDef="let element"> {{element.numberWorker}} </td>
+        <td mat-cell *matCellDef="let element" (click)="getDetail(element)"> {{element.numberWorker}} </td>
       </ng-container>
       <!-- <ng-container matColumnDef="create_at">
         <th mat-header-cell *matHeaderCellDef [style.background-color]="color"> {{'THOI_GIAN_BAO_CAO' | translate}}</th>
@@ -227,8 +223,12 @@
     </table>
     <div class="paginator-container">
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+      <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+      </mat-paginator> -->
+      <mat-paginator [length]="totalElements" [pageSize]="5" [pageSizeOptions]="[5, 10, 20, 50, 100]"
+        [showFirstLastButtons]="true" (page)="onPageChange($event)">
       </mat-paginator>
+
     </div>
 
 

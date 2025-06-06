@@ -112,5 +112,6 @@
     "address": "地址",
     "implement": "执行工作",
     "createdAt": "报告时间",
-    "calendar": "日历"
+    "calendar": "日历",
+    "location": "施工地点"
 }

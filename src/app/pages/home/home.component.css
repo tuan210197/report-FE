@@ -28,3 +28,18 @@
   text-align: center;
 }
 
+.dateRangeChange{
+  display: flex;
+  justify-content: center; /* Đưa toàn bộ nội dung sang phải */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  padding-right: 20px; /* Khoảng cách từ phần tử cuối cùng đến mép phải */
+}
+
+.splitdate{
+  display: flex;
+  justify-content: space-between; /* Đưa toàn bộ nội dung sang phải */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  padding: 20px; /* Khoảng cách từ phần tử cuối cùng đến mép phải */
+}

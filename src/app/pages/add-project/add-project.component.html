@@ -1,16 +1,16 @@
 <div class="container-fluid">
-  
+
     <div class="card-header card-header-danger">
         <br>
         <br>
         <h1 class="title">{{'createProject'| translate}}</h1>
         <br>
     </div>
-    <form [formGroup]="form" >
+    <form [formGroup]="form">
         <div class="row">
             <!-- Project Name -->
             <div class="col-md-12">
-                <mat-form-field class="full-width">
+                <mat-form-field class="full-width" appearance="outline">
                     <mat-label>{{'TEN_DU_AN' | translate}}</mat-label>
                     <input matInput formControlName="projectName">
                 </mat-form-field>
@@ -18,22 +18,44 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <mat-form-field class="full-width">
+                <mat-form-field class="full-width" appearance="outline">
                     <mat-label>{{'LOAI_HINH_DU_AN' | translate}} </mat-label>
-                        <mat-select formControlName="categoryId" >
-                            <mat-option *ngFor="let category of categories" [value]="category.categoryId">
-                              {{ category.categoryName }}
-                            </mat-option>
+                    <mat-select formControlName="categoryId">
+                        <mat-option *ngFor="let category of categories" [value]="category.categoryId">
+                            {{ category.categoryName }}
+                        </mat-option>
 
 
                     </mat-select>
                 </mat-form-field>
 
             </div>
+
             <div class="col-md-6">
-                <mat-form-field class="full-width"> 
-                    <mat-label>{{'submember' | translate}} </mat-label>
-                    <mat-select formControlName=" " multiple >
+                <div class="row">
+                    <!-- Project Name -->
+                    <div class="col-md-12">
+                        <mat-form-field class="full-width" appearance="outline">
+                            <mat-label>{{'location' | translate}}</mat-label>
+                            <input matInput formControlName="location">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>{{'startDate'| translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker" placeholder="Select a date" formControlName="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>{{'pic' | translate}} </mat-label>
+                    <mat-select formControlName="pic">
                         <mat-option *ngFor="let user of users" [value]="user">
                             {{ user.fullName }}
                         </mat-option>
@@ -43,26 +65,17 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-                <mat-form-field class="full-width">
-                  <mat-label>{{'startDate'| translate}}</mat-label>
-                  <input matInput [matDatepicker]="picker" placeholder="Select a date" formControlName="startDate">
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-              </div>
-        </div>
-        <div class="row">
             <!-- Description -->
             <div class="col-md-12">
-                <mat-form-field class="full-width" >
+                <mat-form-field class="full-width" appearance="outline">
                     <mat-label>{{'description'| translate}}</mat-label>
                     <textarea matInput formControlName="description"></textarea>
                 </mat-form-field>
             </div>
         </div>
-        
-        <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="createProject()">{{'CREATE_PROJECT'| translate}}</button>
+
+        <button mat-raised-button type="submit" class="btn btn-success pull-right"
+            (click)="createProject()">{{'CREATE_PROJECT'| translate}}</button>
         <div class="clearfix"></div>
     </form>
 </div>

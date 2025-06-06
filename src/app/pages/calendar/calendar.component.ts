@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateCalendarComponent } from './update-calendar/update-calendar.component';
 import { firstValueFrom, from } from 'rxjs';
+import { color } from 'highcharts';
 interface User {
   uid: string;
   fullName: string;
@@ -31,6 +32,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
   file: File | null = null;
   year: number = 0;
   month: number = 0;
+  color = '';
   calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: 'dayGridMonth',
@@ -75,9 +77,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
   };
   constructor(
-    private http: HttpClient, 
-    private share: ShareService, 
-    public dialog: MatDialog, 
+    private http: HttpClient,
+    private share: ShareService,
+    public dialog: MatDialog,
     private cd: ChangeDetectorRef) {
   }
   ngOnInit() {
@@ -95,14 +97,28 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     const rawData = await firstValueFrom(this.share.getCalendar(data));
 
     this.event = Array.isArray(rawData) ? rawData.flatMap(item => {
+      if (item.title.includes('Điện thoại')) {
+        this.color = 'red';
+      }else if (item.title.includes('LƯU QUANG HUY')) {
+        this.color = '#FF0099';
+      }else if (item.title.includes('VŨ THÀNH NGUYÊN')) {
+        this.color = '#008080';
+      }else if (item.title.includes('NGUYỄN VĂN TÙNG')) {
+        this.color = 'blue';
+      }else{
+        this.color = 'black';
+      }
       const eventList = [];
       eventList.push({
         id: item.id,
         title: item.title,
         start: item.date,
+        textColor: this.color,
+        backgroundColor: this.color,
       });
       return eventList;
     }) : [];
+    console.log('event', this.event);
     this.calendarOptions = {
       ...this.calendarOptions, // Giữ lại các cấu hình khác
       events: this.event, // Gán sự kiện mới
@@ -148,7 +164,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     const currentMonthDate = arg.view.currentStart; // ngày trong tháng hiện tại
     this.year = currentMonthDate.getFullYear(); // năm hiện tại
     this.month = currentMonthDate.getMonth() + 1; // tháng hiện tại (0-11)
-    console.log(currentMonthDate)
     const startDate = arg.start; // đầu tháng hiện tại
     const endDate = arg.end; // cuối tháng hiện tại
 
