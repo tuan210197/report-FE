@@ -90,6 +90,12 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   selectedCategory: string | null = null;
   selectedCompleted: string | null = null;
 
+
+  selectedNames: string[] = [];
+  selectedCategories: string[] | null = null;
+  selectedCompleteds: string[] | null = null;
+
+
   uniqueNames: string[] = [];
   uniqueCategories: string[] = [];
   categories: any[] = []; // Mảng lưu danh sách danh mục
@@ -224,7 +230,7 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     };
   }
-  applyFilter() {
+  applyFilter2() {
 
     this.loadProject();
 
@@ -238,6 +244,31 @@ export class ProjectComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.dataSource.filter = Math.random().toString(); // Cần cập nhật để Angular nhận diện filter thay đổi
   }
+  applyFilter() {
+    this.loadProject();
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const matchesName =
+        !this.selectedNames || this.selectedNames.length === 0
+          ? true
+          : this.selectedNames.includes(data.pic.fullName);
+
+      const matchesCategory =
+        !this.selectedCategories || this.selectedCategories.length === 0
+          ? true
+          : this.selectedCategories.includes(data.category.categoryName);
+
+      const matchesCompleted =
+        this.selectedCompleteds === null || this.selectedCompleteds.length === 0
+          ? true
+          : this.selectedCompleteds.includes(data.status);
+// data.status === 
+      return matchesName && matchesCategory && matchesCompleted;
+    };
+
+    this.dataSource.filter = Math.random().toString(); // Trigger lại filter
+  }
+
   announceSortChange(sortState: Sort) {
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);

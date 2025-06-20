@@ -146,8 +146,8 @@
     <div class="col-md-2 ">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{'filterName'|translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedName" (selectionChange)="applyFilter()">
-          <mat-option [value]="null">ALL</mat-option>
+        <mat-select [(ngModel)]="selectedNames" multiple  (selectionChange)="applyFilter()">
+          <mat-option [value]="null" disabled="true">{{ 'all' | translate }}</mat-option>
           <mat-option *ngFor="let name of uniqueNames" [value]="name">{{ name }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -157,9 +157,8 @@
     <div class="col-md-2 ">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{'filterCategory'|translate }}</mat-label>
-        <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilter()">
-          <mat-option [value]="null">ALL</mat-option>
-
+        <mat-select [(ngModel)]="selectedCategories" multiple  (selectionChange)="applyFilter()">
+          <mat-option [value]="null" disabled="true">{{ 'all' | translate }}</mat-option>
           <mat-option *ngFor="let cate of uniqueCategories" [value]="cate">{{ cate }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -169,13 +168,10 @@
     <div class="col-md-2 ">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{'filterStatus'|translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedCompleted" (selectionChange)="applyFilter()">
-          <mat-option [value]="null">{{ 'all' | translate }}</mat-option>
+        <mat-select [(ngModel)]="selectedCompleteds" multiple  (selectionChange)="applyFilter()">
+          <mat-option [value]="null" disabled="true">{{ 'all' | translate }}</mat-option>
           <mat-option *ngFor="let status of statusList" [value]="status.statusId">
             {{ status.statusId |translate }}</mat-option>
-          <!-- <mat-option value="Completed">Completed</mat-option>
-          <mat-option value="In Progress">In Progress</mat-option>
-          <mat-option value="Cancelled">Cancelled</mat-option> -->
         </mat-select>
       </mat-form-field>
     </div>

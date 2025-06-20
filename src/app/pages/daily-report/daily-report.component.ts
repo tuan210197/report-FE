@@ -283,11 +283,12 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
     }
   }
   async selectionChangeCategory(event: any) {
-
     var val = {
       projectId: event.value
     }
     const report: any = await firstValueFrom(this.share.getDailyReportByProjecetId(val));
+    console.log(report);
+    const startDate: any = await firstValueFrom(this.share.getProjectById(val.projectId));
 
     if (report.data !== null && 'reportId' in report.data) {
       this.form.patchValue(
@@ -302,12 +303,13 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
           // quantityRemain: report.data.quantityRemain, // Bắt buộc nhập
           contractor: report.data.contractor, // Bắt buộc nhập
           numberWorker: report.data.numberWorker, // Bắt buộc nhập
-          startDate: report.data.startDate, // Bắt buộc nhập
+          // startDate: report.data.startDate, // Bắt buộc nhập
+          startDate: startDate.data.startDate, // Bắt buộc nhập
           // endDate: report.data.endDate, // Bắt buộc nhập
           implement: report.data.implement, // Bắt buộc nhập
         }
       );
-    }
+    } 
     if (report.data !== null && 'projectId' in report.data) {
       this.form.patchValue(
         {
@@ -321,15 +323,15 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
           quantityRemain: null,
           contractor: null,
           numberWorker: null,
-          startDate: null,
+          startDate: startDate.data.startDate,
           endDate: null,
           implement: null,
-
         }
       );
     }
   }
   selectionChange(event: any) {
+
     this.selectedProjectSearch = this.projectsSearch.find(p => p.projectId === event.option.value);
     if (this.selectedProjectSearch) {
       this.formGroup.controls['projectId'].setValue(this.selectedProjectSearch.projectId); // Lưu projectId
@@ -452,8 +454,8 @@ export class DailyReportComponent implements OnInit, AfterViewInit {
         progress: data.progress, // Bắt buộc ngày bắt đầu
         // quantity: data.quantity, // Phải lớn hơn 0
         categoryId: data.category.categoryId, // Bắt buộc chọn
-          // quantityCompleted: data.quantityCompleted, // Bắt buộc nhập
-          // quantityRemain: data.quantityRemain, // Bắt buộc nhập
+        // quantityCompleted: data.quantityCompleted, // Bắt buộc nhập
+        // quantityRemain: data.quantityRemain, // Bắt buộc nhập
         contractor: data.contractor, // Bắt buộc nhập
         numberWorker: data.numberWorker, // Bắt buộc nhập
         startDate: this.convertToCustomFormatDate(data.startDate), // Bắt buộc nhập
